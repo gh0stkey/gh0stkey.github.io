@@ -1,0 +1,21 @@
+<aside class="logo">
+
+	{% if page.url == '/index.html' or page.url == '/' %}
+		{% assign link = '/about' %}
+		{% assign prompt = 'About the Author' %}
+	{% else %}
+		{% assign link = '/' %}
+		{% assign prompt = 'Back to Index' %}
+	{% endif %}
+
+	<a href="{{ link | prepend: site.baseurl | prepend: site.url }}">
+		<img src="{{ site.logo_url }}" class="logo-avatar">
+	</a>
+	<span class="logo-prompt code">{{ prompt }}</span>
+</aside>
+<article>
+	<h1 class="title">Author[#]Vulkey_Chen</h1>
+	<div class="divider"></div>
+	<center><a href="/about">About</a> | <a href="/links">Links</a> | <a href="/AssistTool">AssistTool</a> | <a href="https://www.hi-ourlife.com/" target="_blank">Mystery Security Team</a></center>
+	<div class="divider"></div>
+</article>

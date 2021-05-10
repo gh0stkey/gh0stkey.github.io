@@ -1,0 +1,74 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1" /> <title>BurpSuite系列 | 基础技巧（一） · Chen's Blog</title> <meta name="description" content="Burpsuite系列技巧 | 基础技巧（一）"> <link rel="icon" href="http://localhost:4000/assets/favicon.png"> <link rel="apple-touch-icon" href="http://localhost:4000/assets/touch-icon.png"> <link rel="stylesheet" href="http://localhost:4000/assets/core.css"> <link rel="canonical" href="http://localhost:4000/archives/2020-02-13/1"> <link rel="alternate" type="application/atom+xml" title="Chen's Blog" href="http://localhost:4000/feed.xml" /> <link href="/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="all" /> <script> var _hmt = _hmt || []; (function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?e4a42a371cc5994ee02b940034c29658"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })(); </script> </head> <body> <aside class="logo"> <a href="http://localhost:4000/"> <img src="/assets/avatar.jpg" class="logo-avatar"> </a> <span class="logo-prompt code">Back to Index</span> </aside> <article> <h1 class="title">Author[#]Vulkey_Chen</h1> <div class="divider"></div> <center><a href="/about">About</a> | <a href="/links">Links</a> | <a href="/AssistTool">AssistTool</a> | <a href="https://www.hi-ourlife.com/" target="_blank">Mystery Security Team</a></center> <div class="divider"></div> </article> <div id="content"> <article> <div class="center"> <h1 class="title">BurpSuite系列 | 基础技巧（一）</h1> <time class="code">February 13, 2020</time> </div> <div class="divider"></div> <h1 id="burpsuite系列技巧--基础技巧一">Burpsuite系列技巧 | 基础技巧（一）</h1> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Author：CoolCat&amp;key
+</code></pre></div></div> <h2 id="浅析burpsuite作战工具">浅析Burpsuite作战工具</h2> <p>直入burp右键菜单中的Engagement tools，中文翻译为作战工具。</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/main.png" alt="main" /></p> <p>从上往下依次为</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Search                        搜索
+Find Comments                 查找注释
+Find scripts                  查找js代码
+Find references               查找引用
+Analyze target                分析目标
+Discover content              内容勘测
+Schedule task                 定时任务
+Simulate manual testing       人工模拟
+</code></pre></div></div> <p>以上翻译属于个人理解，非字面意思。如有不同见解，欢迎交流。</p> <p>依次聊一下个人的使用心得：</p> <h3 id="0x01-search-搜索">0x01 Search 搜索</h3> <p>在选定的上右键打开后默认如下：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/search1.png" alt="search1" /></p> <p>输入字符串即可查找需要的字符串，相当于浏览器view-source后再Ctrl + F查找字符串。</p> <p>如果只用到这里的话有点不太黑阔，正则搜索这么强大，不用可惜了。</p> <p>贴一条自己常用的正则：</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(.user|pass|accessKeyId|accessKeySecret|secretToken|callback|admin|config|key|access|token?)
+</code></pre></div></div> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/search2.png" alt="search2" /></p> <p>擅用该功能，在SRC捡洞可能可能只是一个习惯而已。（比如每次准备关Burp之前考虑全选site map中所有的站点，再拿正则去尝试一下。）</p> <h3 id="0x02-find-comments-查找注释">0x02 Find Comments 查找注释</h3> <p>选择目标右键打开后如下图：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Comments1.png" alt="Comments1" /></p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Comments2.png" alt="Comments2" /></p> <p>可以理解为Search功能的正则写为:</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;!--(.*?)--&gt;
+</code></pre></div></div> <p>不同语言的注释不一样，burp内置的正则更为全面。测试过程中适当看一下注释内容，没准一个未授权就出来了。</p> <h3 id="0x03-find-scripts-查找js代码">0x03 Find scripts 查找js代码</h3> <p>选择目标右键打开后如下图：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/script1.png" alt="script1" /></p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/script2.png" alt="script2" /></p> <p>该功能处理.js后缀的文件之外，页面中script标签的内容也会自动匹配出来。等同于右键看完当前页面的js逻辑后在接着Ctrl F 搜.js然后继续看代码，在Burp里相对方便得多。</p> <h3 id="0x04-find-references-查找引用">0x04 Find references 查找引用</h3> <p>选择目标右键打开后如下图：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/references1.png" alt="references1" /></p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/references2.png" alt="references2" /></p> <p>如果用过<a href="https://github.com/TheKingOfDuck/myScripts/tree/master/LinksDumper">LinksDumper</a>的话会发现Burp这个功能和它一模一样，都是匹配出页面中存在的各类链接。</p> <p>默认自带的功能还有不少人是去用插件或者用独立的程序跑。burp自带的它不香咩？</p> <h3 id="0x05-analyze-target-分析目标">0x05 Analyze target 分析目标</h3> <p>选择目标右键打开后总共有四个页面</p> <p>1.总结页面：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Analyze1.png" alt="Analyze1" /></p> <p>假设拿到100个目标，筛选软柿子的时候通过总结页面判断一下，寻找交互点多的站点/链接进行单点突破，未尝不是一个高效的选择。</p> <p>2.动态Urls：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Analyze2.png" alt="Analyze2" /></p> <p>该功能可以快速筛选出带外部参数的url，并统计了参数的数量，秉着交互点越多可能存在的问题就越多的原则，筛选一下，效率++。</p> <p>3.其他Url：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Analyze3.png" alt="Analyze3" /></p> <p>该功能可以理解为Find references功能遍历出来所有的连接后再去除Dynamic URLs中带交互点的Url的结果。</p> <p>4.参数统计：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Analyze4.png" alt="Analyze4" /></p> <p>首先是统计了出现过那些参数，其次是这些参数在Url里面出现过次数。有了这个功能在瓶颈渗透提取本站存在的参数时根本不需要第三方插件工具辅助，直接复制name字段即可；某个参数存在漏洞后也可通过该功能查找其他可能存在相同问题的Url。</p> <h3 id="0x06-discover-content--内容勘测">0x06 Discover content 内容勘测</h3> <p>该功能秒杀一切目录扫描工具。</p> <p>下面是关于如何巧用它去递归扫描站点备份的：</p> <p>此前在米斯特<code class="language-plaintext highlighter-rouge">BurpSuite 插件生态开发组</code>里有提到想开发一款主动的备份扫描插件，寄生于<code class="language-plaintext highlighter-rouge">BurpSuite</code>强大的爬虫功能对每个目录/文件进行备份扫描。写一半发现<code class="language-plaintext highlighter-rouge">BurpSuite</code>本来就有这样的功能，只是很少有人用到罢了，本文仅对相关功能进行简要的分析以及优化。</p> <h4 id="0x06_1-简介">0x06_1 简介</h4> <p>正常访问时爬虫被动收集到的目录:</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/eff8945b-a523-413a-951b-645552b448a3.jpg" alt="eff8945b-a523-413a-951b-645552b448a3.jpg" /></p> <p>下面是本文的主角：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/43951031-06ef-4dc9-bfc2-b0b00cede03a.jpg" alt="43951031-06ef-4dc9-bfc2-b0b00cede03a.jpg" /></p> <p>位于<code class="language-plaintext highlighter-rouge">Engagement tools</code> ==&gt; <code class="language-plaintext highlighter-rouge">Discover content</code></p> <p>看看默认配置：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/42332280-aad3-436d-9f14-7bd8adadcdc4.jpg" alt="42332280-aad3-436d-9f14-7bd8adadcdc4.jpg" /></p> <p>图中圈起来的第一部分默认勾选了burp内置的四个字典,第二个圈也是默认配置,其作用时从站点中提取各种目录并递归扫描,前面的配置可根据情况修改,后面不建议动它。</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/1c7bdd51-7f22-4aae-b4d3-d3182c7a79f9.jpg" alt="1c7bdd51-7f22-4aae-b4d3-d3182c7a79f9.jpg" /></p> <p>默认配置就是这四项了，下面具体分析一下他扫描的流量，取其精华。</p> <h4 id="0x06_2-扫描分析">0x06_2 扫描分析</h4> <p>流程1:</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/e16ed5cd-e230-4251-932f-c5dead9b9924.jpg" alt="e16ed5cd-e230-4251-932f-c5dead9b9924.jpg" /></p> <p>先去除所有文件的后缀以及提取目录名当作文件扫一遍。</p> <p>流程2:</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/1da2ca8b-ee53-46e8-aa3c-97d3f77d9985.jpg" alt="1da2ca8b-ee53-46e8-aa3c-97d3f77d9985.jpg" /></p> <p>在所有去了后缀的文件名后面加上<code class="language-plaintext highlighter-rouge">Test these extentsions</code>配置中的所有后缀并进行扫描，在已知站点语言的情况下此处明显多了很多无效流量。</p> <p>流程3:</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/0a2b7646-d46e-4d15-9854-1ab5f2740fd1.jpg" alt="0a2b7646-d46e-4d15-9854-1ab5f2740fd1.jpg" /></p> <p>将流程1中的所有文件名当作目录扫一遍。</p> <p>流程4:</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/5b4eca82-88dd-4c19-bf1e-f44986131d9c.jpg" alt="5b4eca82-88dd-4c19-bf1e-f44986131d9c.jpg" /></p> <p>按照配置中Filenames中的字典顺序依次遍历并结合流程2的方式遍历文件。</p> <p>流程5:</p> <p>依次在每层目录执行一遍流程1-4，如果新目录或文件发现就添加到列队里面。</p> <h4 id="0x06_3-优化扫描">0x06_3 优化扫描</h4> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/2fb555a0-a4d9-4c34-8d2b-d4dc9e4a683e.png" alt="2fb555a0-a4d9-4c34-8d2b-d4dc9e4a683e.png" /></p> <p>缺陷很明显，仅仅三个目录三个文件总共请求了14048次，流量超过20M。</p> <p>递归扫描产生的无效流量太多了。</p> <p>首要原因出现在:</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/d354e20c-8b49-49e3-9706-210dc440689f.jpg" alt="d354e20c-8b49-49e3-9706-210dc440689f.jpg" /></p> <p>大多数时候，已知语言情况下完全没必要吧所有后缀都跑一遍，留特定语言以及相关后缀。如st2时加上.action/.do,流量去掉大半。</p> <p>其次出现在:</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/02d3d5c9-89e5-4ca4-96e2-68d36f1f062d.jpg" alt="02d3d5c9-89e5-4ca4-96e2-68d36f1f062d.jpg" /></p> <p>此处主要针对扫备份，原生字典长这样:</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bac
+BAC
+backup
+BACKUP
+bak
+BAK
+conf
+cs
+csproj
+gz
+inc
+INC
+ini
+java
+log
+lst
+old
+OLD
+orig
+ORIG
+sav
+save
+tar
+temp
+tmp
+TMP
+vb
+vbproj
+zip
+$$$
+-OLD
+-old
+0
+1
+~1
+~bk
+</code></pre></div></div> <p>主要针对国外的站吧。这里提供一份。</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>txt
+md
+xml
+db
+7z
+rar
+zip
+gz
+tar
+tar.gz
+sql
+bak
+swp
+old
+properties
+inc
+ini
+mdb
+mdf
+conf
+config
+log
+rar
+</code></pre></div></div> <p>最后是字典的选择：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/a0e1fe7b-10c3-4288-8398-7684a17590a7.png" alt="a0e1fe7b-10c3-4288-8398-7684a17590a7.png" /></p> <p>burp内置的4个字典内容重复率极高，比如about这个词在四个字典里都分别出现了…四个字典共3266个，去重后2265个。</p> <p>结果保存在：</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://raw.githubusercontent.com/TheKingOfDuck/myScripts/master/burp_dir.txt
+</code></pre></div></div> <p>文件名方面推荐：</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://raw.githubusercontent.com/TheKingOfDuck/myScripts/master/burp_filenames.txt
+</code></pre></div></div> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/4e84215b-6f57-434d-8943-766a49cfe1d6.jpg" alt="4e84215b-6f57-434d-8943-766a49cfe1d6.jpg" /></p> <p>如此一来在扫描目录的过程也可把备份一并扫了。</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/010baabc-e71c-45b6-a34f-0263fd70699f.jpg" alt="010baabc-e71c-45b6-a34f-0263fd70699f.jpg" /></p> <h3 id="0x07-schedule-task--定时任务">0x07 Schedule task 定时任务</h3> <p>选择目标右键打开后如下图：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Schedule2.png" alt="Schedule2" /><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Schedule1.png" alt="Schedule1" /></p> <p>定时任务，没啥特别的值得说。</p> <h3 id="0x08-simulate-manual-testing-人工模拟">0x08 Simulate manual testing 人工模拟</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>This function sends common test payloads to random URL s and parameters at irregular intervals, to generate traflic similar to that caused by manual penetration testing. Its only real use is to let you take a break from testing while still looking busy according to the server's logs. Only items which you selected in the site map will be requested.
+</code></pre></div></div> <p>正如功能描述中所说的，这是一个懒人挖洞选项。</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/Simulate1.png" alt="Simulate1" /></p> <p>缺陷很明显，不会自动寻找并提交表单，只能依托于已有的表单/参数的基础上进行探测，相当于一款被动扫描器。结合Discover content使用，法力无边。</p> <h3 id="0x09-总结">0x09 总结</h3> <p>熟练使用这些作战功能，扫描器从此是路人。</p> <h2 id="配置intruder预定义payload列表">配置Intruder预定义Payload列表</h2> <p>预定义Payload列表在这里可以看见：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/15784875614943.jpg" alt="-w527" /></p> <p>在Tab栏中有选项可以配置-<code class="language-plaintext highlighter-rouge">Configure predefined payload lists</code>：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/15784875896360.jpg" alt="-w297" /></p> <p>选择Payload列表目录（注：<strong>需将常用的字典都放在一个目录里面</strong>）：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/15784876498364.jpg" alt="-w571" /></p> <h2 id="自定义插入点进行扫描">自定义插入点进行扫描</h2> <p>将请求报文转发至Intruder，选择扫描的插入点：<code class="language-plaintext highlighter-rouge">Add$</code></p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/15784879498028.jpg" alt="-w457" /></p> <p>右键选择<code class="language-plaintext highlighter-rouge">Scan defined insertion points</code></p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-02-13/15784879702356.jpg" alt="-w597" /></p> </article> <div class="page-navigation code"> <a class="next" href="http://localhost:4000/archives/2020-06-22/1" title="NEXT: Web层面上的那些拒绝服务攻击(DoS)">&lt;&lt;</a> <span> &middot; </span> <a class="home" href="http://localhost:4000/" title="Back to Index">Index</a> <span> &middot; </span> <a class="prev" href="http://localhost:4000/archives/2020-01-24/1" title="PREV: ModSecurity 拒绝服务漏洞 (CVE-2019-19886) 复现">&gt;&gt;</a> </div> </div> <div class="footer"> <span class="block">&lt;/&gt; Copyright &copy; Vulkey_Chen's Blog (GH0ST.CN) 2016-2020</span> </div> <script src="/fancybox/lib/jquery-1.10.2.min.js"></script> <script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script> <script> $(document).ready(function() { $("article img").each(function() { var strA = "<a style='text-decoration: none;' id='imgid' href='" + this.src + "'></a>"; $(this).wrapAll(strA); }); }); $("#imgid").fancybox({ openEffect : 'elastic', closeEffect : 'elastic', }); </script> </body> </html>
