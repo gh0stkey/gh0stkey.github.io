@@ -4,7 +4,7 @@ author: Vulkey_Chen
 title: "DOM Invader: 让DOM XSS的发现变得更加容易"
 date: 2021-07-01
 music-id: "1481164987"
-permalink: /archives/2021-07-01/0
+permalink: /archives/2021-07-01/1
 description: "DOM Invader: 让DOM XSS的发现变得更加容易"
 ---
 
