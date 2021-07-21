@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Chen's Blog</title>
+    <description>Chen's Blog - HACK THE WORLD.</description>
+    <link>http://localhost:4000</link>
+    
+      
+        <item>
+          <title>DOM Invader: 让DOM XSS的发现变得更加容易</title>
+          <description>DOM Invader: 让DOM XSS的发现变得更加容易</description>
+          <pubDate>2021-07-01T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2021-07-01/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2021-07-01/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>某VPN客户端远程下载文件执行挖掘</title>
+          <description>某VPN客户端远程下载文件执行挖掘</description>
+          <pubDate>2021-05-05T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2021-05-05/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2021-05-05/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>记一次攻防演习渗透过程</title>
+          <description>记一次攻防演习渗透过程</description>
+          <pubDate>2020-11-22T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-11-22/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-11-22/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>米斯特安全团队五岁后随笔</title>
+          <description>米斯特安全团队五岁后随笔</description>
+          <pubDate>2020-10-19T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-10-19/0</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-10-19/0</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>某终端检测响应平台代码审计挖掘（RCE）</title>
+          <description>某终端检测响应平台代码审计挖掘（RCE）</description>
+          <pubDate>2020-09-03T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-09-03/4</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-09-03/4</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>某终端检测响应平台代码审计挖掘（权限绕过）</title>
+          <description>某终端检测响应平台代码审计挖掘（权限绕过）</description>
+          <pubDate>2020-09-03T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-09-03/3</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-09-03/3</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>某终端检测响应平台代码审计分析</title>
+          <description>某终端检测响应平台代码审计分析</description>
+          <pubDate>2020-09-03T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-09-03/2</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-09-03/2</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>浅谈蓝队反制手段</title>
+          <description>浅谈蓝队反制手段</description>
+          <pubDate>2020-09-03T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-09-03/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-09-03/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>Web层面上的那些拒绝服务攻击(DoS)</title>
+          <description>Web层面上的那些拒绝服务攻击(DoS)</description>
+          <pubDate>2020-06-22T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-06-22/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-06-22/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>[XSSI]动态JS劫持用户信息</title>
+          <description>[XSSI]动态JS劫持用户信息</description>
+          <pubDate>2020-01-08T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-01-08/3</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-01-08/3</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>利用SourceMap还原网站原始代码(前端)</title>
+          <description>利用SourceMap还原网站原始代码(前端)</description>
+          <pubDate>2020-01-08T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2020-01-08/2</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2020-01-08/2</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>WebFuzzing方法和漏洞案例总结</title>
+          <description>WebFuzzing方法和漏洞案例总结</description>
+          <pubDate>2019-11-11T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2019-11-11/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2019-11-11/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>对某攻击队的Webshell进行分析</title>
+          <description>对某攻击队的Webshell进行分析</description>
+          <pubDate>2019-08-21T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2019-08-21/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2019-08-21/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>TRICK: Linux Auditd审计工具</title>
+          <description>TRICK: Linux Auditd审计工具</description>
+          <pubDate>2019-08-20T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2019-08-20/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2019-08-20/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>RGPerson - 随机身份生成脚本</title>
+          <description>随机身份生成脚本</description>
+          <pubDate>2019-08-16T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2019-08-16/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2019-08-16/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>基于BurpSuite快速探测越权-Authz插件</title>
+          <description>基于BurpSuite快速探测越权-Authz插件</description>
+          <pubDate>2019-06-27T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2019-06-27/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2019-06-27/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>浅谈WebSocket跨域劫持漏洞(CSWSH)</title>
+          <description>浅谈WebSocket跨域劫持漏洞(CSWSH)</description>
+          <pubDate>2019-03-20T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2019-03-20/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2019-03-20/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>记一次移动光猫（GM219-S）安全测试</title>
+          <description>记一次移动光猫（GM219-S）安全测试</description>
+          <pubDate>2019-03-12T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2019-03-12/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2019-03-12/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>我为何在博客模板留后门</title>
+          <description>博客模板后门</description>
+          <pubDate>2019-01-23T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2019-01-23/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2019-01-23/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>iOS URL Schemes与漏洞的碰撞组合</title>
+          <description>iOS URL Schemes与漏洞的碰撞组合</description>
+          <pubDate>2018-12-08T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-12-08/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-12-08/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>打造Mac下APK逆向环境到实战接口XSS挖掘</title>
+          <description>打造Mac下APK逆向环境到实战接口XSS挖掘</description>
+          <pubDate>2018-11-18T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-11-18/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-11-18/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>一探短文件名</title>
+          <description>一探短文件名</description>
+          <pubDate>2018-11-14T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-11-14/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-11-14/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>浅析PDF事件导致的安全漏洞</title>
+          <description>浅析PDF事件导致的安全漏洞</description>
+          <pubDate>2018-11-14T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-11-14/2</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-11-14/2</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>Wfuzz高阶功法</title>
+          <description>Wfuzz高阶功法</description>
+          <pubDate>2018-10-28T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-10-28/3</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-10-28/3</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>Wfuzz基本功</title>
+          <description>Wfuzz基本功</description>
+          <pubDate>2018-10-28T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-10-28/2</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-10-28/2</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>Wfuzz初上手</title>
+          <description>Wfuzz初上手</description>
+          <pubDate>2018-10-28T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-10-28/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-10-28/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>刺透内网的HTTP代理</title>
+          <description>刺透内网的HTTP代理</description>
+          <pubDate>2018-09-11T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-09-11/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-09-11/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>组合拳出击-Self型XSS变废为宝</title>
+          <description>组合拳出击-Self型XSS变废为宝</description>
+          <pubDate>2018-08-28T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-08-28/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-08-28/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>GET请求Referer限制绕过总结</title>
+          <description>GET请求Referer限制绕过总结</description>
+          <pubDate>2018-08-01T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-08-01/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-08-01/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>我的Web应用安全模糊测试之路</title>
+          <description>议题解读《我的Web应用安全模糊测试之路》</description>
+          <pubDate>2018-07-25T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-07-25/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-07-25/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>记一次对某企业的渗透测试实战</title>
+          <description>本文总结一下漫长的渗透测试过程，想尽了各种方法，终于找到了突破口。so没有绝对的安全，所谓的安全性其实都是相对的～</description>
+          <pubDate>2018-06-20T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-06-20/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-06-20/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>密码重置思路-小密圈的一道题</title>
+          <description>密码重置思路-小密圈的一道题</description>
+          <pubDate>2018-05-05T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-05-05/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-05-05/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>CSRF之你登陆我的账号#业务逻辑组合拳劫持你的权限</title>
+          <description>CSRF之你登陆我的账号#业务逻辑组合拳劫持你的权限</description>
+          <pubDate>2018-04-28T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-04-28/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-04-28/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>Web安全测试学习手册-业务逻辑测试</title>
+          <description>Web安全测试学习手册-业务逻辑测试</description>
+          <pubDate>2018-04-18T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-04-18/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-04-18/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>二维码登陆的常见缺陷剖析</title>
+          <description>二维码登陆，在表面上来看好像是很安全，但是深入去研究会发现很多都是存在安全隐患～</description>
+          <pubDate>2018-04-08T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-04-08/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-04-08/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>读取型CSRF-需要交互的内容劫持</title>
+          <description>大部分人所认识的CSRF都是写入型的，而本文是对读取型CSRF的一个总结...</description>
+          <pubDate>2018-03-22T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-03-22/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-03-22/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>OAuth2.0认证缺陷-第三方帐号快捷登录授权劫持漏洞</title>
+          <description>OAuth2.0认证缺陷，巧妙的使用白名单让攻击链产生...</description>
+          <pubDate>2018-02-12T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2018-02-12/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2018-02-12/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>鸡肋点搭配ClickJacking攻击-获取管理员权限</title>
+          <description>笔者挖到了一个selfxss，在思考之后想起了ClickJacking，于是结合之...</description>
+          <pubDate>2017-12-20T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2017-12-20/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2017-12-20/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>文件寄生——NTFS文件流实际应用</title>
+          <description>利用文件流可以给渗透测试带来很大的便利</description>
+          <pubDate>2017-03-29T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2017-03-29/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2017-03-29/1</guid>
+        </item>
+      
+    
+      
+        <item>
+          <title>移位溢注：告别依靠人品的偏移注入</title>
+          <description>本文中我们研究了一种新的注入技术让“偏移注入不在需要人品”。在这里定义这种注入技术为：“移位溢注技术”。</description>
+          <pubDate>2017-03-08T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2017-03-08/1</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2017-03-08/1</guid>
+        </item>
+      
+    
+  </channel>
+</rss>

@@ -1,0 +1,21 @@
+<aside class="logo">
+
+	{% if page.url == '/index.html' or page.url == '/' %}
+		{% assign link = '/about' %}
+		{% assign prompt = 'About the Author' %}
+	{% else %}
+		{% assign link = '/' %}
+		{% assign prompt = 'Back to Index' %}
+	{% endif %}
+
+	<a href="{{ link | prepend: site.baseurl | prepend: site.url }}">
+		<img src="{{ site.logo_url }}" class="logo-avatar">
+	</a>
+	<span class="logo-prompt code">{{ prompt }}</span>
+</aside>
+<article>
+	<h1 class="title">ᴀᴜᴛʜᴏʀ: ᴠᴜʟᴋᴇʏ_ᴄʜᴇɴ</h1>
+	<div class="divider"></div>
+	<center><a href="/about" target="_blank">ᴀʙᴏᴜᴛ</a> | <a href="/links" target="_blank">ʟɪɴᴋs</a> | <a href="/AssistTool" target="_blank">ᴀssɪsᴛ ᴛᴏᴏʟ</a> | <a href="/Binary-Learning" target="_blank">ʙɪɴᴀʀʏ ʟᴇᴀʀɴɪɴɢ</a></center>
+	<div class="divider"></div>
+</article>

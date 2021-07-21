@@ -1,0 +1,18 @@
+<div class="footer">
+  <span class="block">&lt;/&gt; Copyright &copy; Chen's Blog (GH0ST.CN) 2016-2021</span>
+</div>
+<script src="/fancybox/lib/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script>
+$(document).ready(function() {
+    $("article img").each(function() {
+        var strA = "<a style='text-decoration: none;' id='imgid' href='" + this.src + "'></a>";
+        $(this).wrapAll(strA);
+    });
+});
+$("#imgid").fancybox({
+	openEffect : 'elastic',
+	closeEffect : 'elastic',
+});
+</script>

