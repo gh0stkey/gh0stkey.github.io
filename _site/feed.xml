@@ -7,6 +7,16 @@
     
       
         <item>
+          <title>CaA - BurpSuite流量收集和分析插件</title>
+          <description>CaA - BurpSuite流量收集和分析插件</description>
+          <pubDate>2021-11-11T00:00:00+08:00</pubDate>
+          <link>http://localhost:4000/archives/2021-11-11/0</link>
+          <guid isPermaLink="true">http://localhost:4000/archives/2021-11-11/0</guid>
+        </item>
+      
+    
+      
+        <item>
           <title>DOM Invader: 让DOM XSS的发现变得更加容易</title>
           <description>DOM Invader: 让DOM XSS的发现变得更加容易</description>
           <pubDate>2021-07-01T00:00:00+08:00</pubDate>
@@ -32,16 +42,6 @@
           <pubDate>2020-11-22T00:00:00+08:00</pubDate>
           <link>http://localhost:4000/archives/2020-11-22/1</link>
           <guid isPermaLink="true">http://localhost:4000/archives/2020-11-22/1</guid>
-        </item>
-      
-    
-      
-        <item>
-          <title>米斯特安全团队五岁后随笔</title>
-          <description>米斯特安全团队五岁后随笔</description>
-          <pubDate>2020-10-19T00:00:00+08:00</pubDate>
-          <link>http://localhost:4000/archives/2020-10-19/0</link>
-          <guid isPermaLink="true">http://localhost:4000/archives/2020-10-19/0</guid>
         </item>
       
     
