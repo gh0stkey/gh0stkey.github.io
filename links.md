@@ -9,7 +9,7 @@ title: 友情链接
 
 **\# 安全开发**
 
-\| [三米前有蕉皮](https://www.cnblogs.com/Kali-Team/) \| [悟空](http://hacktech.cn/) 
+[三米前有蕉皮](https://www.cnblogs.com/Kali-Team/) \| [悟空](http://hacktech.cn/) 
 
 **\# 二进制**
 
