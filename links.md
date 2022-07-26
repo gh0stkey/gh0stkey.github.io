@@ -19,3 +19,7 @@ title: 友情链接
 
 [YanZiShuang](https://www.whsgwl.net/index.html) \| [Catsay](https://www.cnblogs.com/WeiJunHuaXin/)
 
+
+**\# 布道师（综合能力）**
+
+[CNSRC](http://www.cnsrc.org.cn/)
