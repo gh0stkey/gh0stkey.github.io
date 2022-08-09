@@ -17,16 +17,6 @@
     
       
         <item>
-          <title>DOM Invader: 让DOM XSS的发现变得更加容易</title>
-          <description>DOM Invader: 让DOM XSS的发现变得更加容易</description>
-          <pubDate>2021-07-01T00:00:00+08:00</pubDate>
-          <link>http://localhost:4000/archives/2021-07-01/1</link>
-          <guid isPermaLink="true">http://localhost:4000/archives/2021-07-01/1</guid>
-        </item>
-      
-    
-      
-        <item>
           <title>某VPN客户端远程下载文件执行模拟逆向分析</title>
           <description>某VPN客户端远程下载文件执行模拟逆向分析</description>
           <pubDate>2021-05-05T00:00:00+08:00</pubDate>
