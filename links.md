@@ -17,8 +17,7 @@ title: 友情链接
 
 **\# 逻辑师（底层能力）**
 
-[YanZiShuang](https://www.whsgwl.net/index.html) \| [Catsay](https://www.cnblogs.com/WeiJunHuaXin/)
-
+[YanZiShuang](https://www.whsgwl.net/index.html) \| [Catsay](https://www.cnblogs.com/WeiJunHuaXin/) | [Cata1oc](https://cata1oc.github.io)
 
 **\# 布道师（综合能力）**
 
