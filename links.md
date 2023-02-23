@@ -5,7 +5,7 @@ title: 友情链接
 
 **\# 渗透师（进攻能力）**
 
-[Depy](https://rce.ink) | [Lz1y](https://www.lz1y.cn/) \| [倾旋](https://payloads.online/) \| [Powerviews](https://powerviews.github.io/)
+[Depy](https://rce.ink) \| [Lz1y](https://www.lz1y.cn/) \| [倾旋](https://payloads.online/) \| [Powerviews](https://powerviews.github.io/)
 
 **\# 缔造师（开发能力）**
 
