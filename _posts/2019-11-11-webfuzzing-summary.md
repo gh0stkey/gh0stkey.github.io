@@ -28,7 +28,7 @@ description: "WebFuzzing方法和漏洞案例总结"
 
 其中涉及的一些漏洞可能无法作为Fuzzing归类，这里也进行了强行的归类，只是想告诉大家漏洞挖掘中思路发散的重要性，个人也觉得比较经典。
 
-**注：** 漏洞案例进行了脱敏以及细节上的修改
+**注：** 漏洞案例进行了脱敏以及细节上的修改。
 
 ### 案例-Add
 
@@ -73,11 +73,11 @@ Fuzz存在潜藏参数，可控验证码生成大小：
 
 获得一个敏感信息返回的请求端点：`http://xxx/getInfo`
 
-使用`callback_dict.txt`字典进行Fuzz
+使用`callback_dict.txt`字典进行Fuzz：
 
 ![-w536](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722720029660.jpg)
 
-成功发现`callback`这个潜藏参数
+成功发现`callback`这个潜藏参数：
 
 ![-w907](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722721391525.jpg)
 
@@ -91,7 +91,7 @@ Fuzz存在潜藏参数，可控验证码生成大小：
 {"responseData":{"userid":"user_id","login":"user_name","password":"user_password","mobilenum":"user_mobilephone_number","mobileisbound":"01","email":"user_email_address"}}
 ```
 
-尝试了一些测试思路都无法发现安全漏洞，于是想到了`响应变请求`思路
+尝试了一些测试思路都无法发现安全漏洞，于是想到了`响应变请求`思路。
 
 将响应报文的JSON字段内容转化为HTTP请求的字段内容（BurpSuite插件项目：`https://github.com/gh0stkey/JSONandHTTPP`）：
 
@@ -99,11 +99,11 @@ Fuzz存在潜藏参数，可控验证码生成大小：
 
 将相关的信息字段内容替换为测试账号B的信息（例如：login=A -> login=B）
 
-发现无法得到预期的越权漏洞，并尝试分析该网站其他请求接口对应的参数，发现都为大写，将之前的参数转换为大写
+发现无法得到预期的越权漏洞，并尝试分析该网站其他请求接口对应的参数，发现都为大写，将之前的参数转换为大写：
 
 ![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722724827925.jpg)
 
-继续Fuzz，结果却出人意料达到了预期
+继续Fuzz，结果却出人意料达到了预期：
 
 ![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722725077041.jpg)
 
@@ -125,7 +125,7 @@ POST Data: userId=1028
 
 可以看见这里的信息并不敏感，但根据测试发现userId参数可以进行越权遍历
 
-根据url判断这个请求的意思是根据用户id查看用户的身份，url中的驼峰方法(**getRolesByUserId**)惊醒了我，根据命名规则结构我将其修改成**getUserByUserId**，也就是根据用户id获取用户，也就成为了如下请求包
+根据url判断这个请求的意思是根据用户id查看用户的身份，url中的驼峰方法(**getRolesByUserId**)惊醒了我，根据命名规则结构我将其修改成**getUserByUserId**，也就是根据用户id获取用户，也就成为了如下请求包。
 
 ```http
 POST URL: https://xxx/getUserByUserId
@@ -134,7 +134,7 @@ POST Data: userId=1028
 
 ![-w708](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722727698302.jpg)
 
-成功返回了敏感信息，并通过修改userId可以越权获取其他用户的信息
+成功返回了敏感信息，并通过修改userId可以越权获取其他用户的信息。
 
 
 #### [逻辑漏洞]敏感的嗅觉
@@ -148,7 +148,7 @@ POST /mvc/h5/jd/mJSFHttpGWP HTTP/1.1
 param={"userPin":"$Uid$","addressType":0}
 ```
 
-而这个请求返回的信息较为敏感，返回了个人的一些物理地址信息
+而这个请求返回的信息较为敏感，返回了个人的一些物理地址信息：
 
 ![-w545](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722729757171.jpg)
 
@@ -163,12 +163,11 @@ param={"userPin":"$Uid$","addressType":0}
 
 分析这个后台管理系统的URL:`https://xxx/?m=index`，该URL访问解析过来 的是主⻚信息。
 
-尝试对请求参数`m`的值进行`Fuzz`，7K+的字典进行Fuzz，一段时间之后收获降临
+尝试对请求参数`m`的值进行`Fuzz`，7K+的字典进行Fuzz，一段时间之后收获降临：
 
 ![-w792](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722732301271.jpg)
 
-
-获得了一个有用的请求:`?m=view`，该请求可以直接未授权获取信息
+获得了一个有用的请求:`?m=view`，该请求可以直接未授权获取信息：
 
 ![-w741](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722732785662.jpg)
 
@@ -193,29 +192,13 @@ param={"userPin":"$Uid$","addressType":0}
 
 ![-w460](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722737353104.jpg)
 
-成功通过SQLi漏洞进行GetWebshell
+成功通过SQLi漏洞进行GetWebshell。
 
 ![-w265](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-11-11/15722737780009.jpg)
 
 
-## 字典收集
-
-### 项目推荐
-
-**注：** 以下项目来自“米斯特安全团队”成员编写或整理发布
-
-BurpCollector(BurpSuite参数收集插件)：`https://github.com/TEag1e/BurpCollector`
-
-Fuzz字典：`https://github.com/TheKingOfDuck/fuzzDicts`
-
-### 借助平台
-
-1.依靠Github收集：`https://github.com/search?q=%22%24_GET%22&type=Code`
-
-2.借助zoomeye、fofa等平台收集
-
 ## 总结
 
-核心其实还是在于漏洞挖掘时的心细，一件事情理解透彻之后万物皆可Fuzz
+核心其实还是在于漏洞挖掘时的心细，一件事情理解透彻之后万物皆可Fuzz。
 
-平时注意字典的更新、整理和对实际情况的分析，再进行关联整合
+平时注意字典的更新、整理和对实际情况的分析，再进行关联整合。
