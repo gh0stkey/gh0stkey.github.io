@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Chen's Blog</title>
-    <description>Chen's Blog - HACK THE WORLD.</description>
+    <description>Chen's Blog，分享安全领域的所思、所想、所学。</description>
     <link>http://localhost:4000</link>
     
       
