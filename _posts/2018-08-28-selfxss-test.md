@@ -9,7 +9,7 @@ description: "组合拳出击-Self型XSS变废为宝"
 
 # 前言
 
-作者：米斯特安全攻防实验室-Vulkey_Chen
+作者：Vulkey_Chen
 
 博客：gh0st.cn
 
