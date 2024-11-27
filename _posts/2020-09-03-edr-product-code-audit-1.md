@@ -222,12 +222,12 @@ $ldb_mapreduce->get = function ($params) use(&$store_root) {
 
 由于代码过长，很多可以直接在本地调试输出，大概解释下这里的意思，就是将`$id = 'util.common.auth';`处理变成路径`$php = dirname(__FILE__)."/$path.php";`，结果就是`/bin/mapreduce/util/common/auth.php`
 
-![-w1170](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15979094220269.jpg)
+![-w1170](/images/2020-09-03/15979094220269.jpg)
 
 
 接着**require_once（ 包含 ）**这个文件，最后将`auth.php`文件公开的注册接口返回：
 
-![-w712](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15979127711439.jpg)
+![-w712](/images/2020-09-03/15979127711439.jpg)
 
 
 至此，我们对`ldb_mapreduce_invoke`函数的分析就差不多了，最后又是一个`call_user_func`回调函数调用`auth.php`接口`app_auth_check`：
@@ -333,17 +333,17 @@ $get_super_ip = function(){
 
 继续跟进`divideUploader.php`发现没办法直接利用（限制了上传路径和后缀）：
 
-![-w557](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15979141178295.jpg)
+![-w557](/images/2020-09-03/15979141178295.jpg)
 
 只能上传指定后缀到指定目录：
 
-![-w304](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15979141887122.jpg)
+![-w304](/images/2020-09-03/15979141887122.jpg)
 
 全局搜索`app_auth_check`函数发现`/bin/mapreduce/`目录下的很多接口都在最开始加了一层`app_auth_check`函数用来做权限判断，那么我们这时候就差一个接口调用的入口即可未授权调用所有接口了。
 
 只能在`/bin/web`可直接访问目录下寻找，发现`/bin/web/launch.php`文件，其文件注释就表明了这个文件是应用程序通用执行入口，可以通过分析的方式构建请求（ 由于分析逻辑较简单这里就不带大家过一遍了，可以自自行分析 ），也可以通过前台的方式直接抓到该文件的请求：
 
-![-w583](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15979149980794.jpg)
+![-w583](/images/2020-09-03/15979149980794.jpg)
 
 POST请求传递JSON数据：
 
@@ -363,11 +363,11 @@ data - 对应公共接口函数逻辑所需的参数
 
 未加`Y-Forwarded-For`头请求，提示需要登陆：
 
-![-w1038](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15979150411784.jpg)
+![-w1038](/images/2020-09-03/15979150411784.jpg)
 
 添加后权限绕过，直接可以获取数据：
 
-![-w1276](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15979151015568.jpg)
+![-w1276](/images/2020-09-03/15979151015568.jpg)
 
 ## 最后
 

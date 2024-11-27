@@ -166,7 +166,7 @@ function get_opr($req_url){
 
 我们先看常量 `STD_CSSP_EXEC_SLOG_ACTION_URL` 对应值，直接看代码开头包含了哪些文件即可 : 
 
-![-w938](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981261213631.jpg)
+![-w938](/images/2020-09-03/15981261213631.jpg)
 
 最终发现 `/bin/mapreduce/app/web/device_linkage/common/common.php` 中定义了常量 :
 
@@ -215,9 +215,9 @@ function get_interface_data($argv) {
 
 那么想要进入调用函数 `get_opr` 的逻辑，我们需要先了解下函数 `get_interface_data` 的逻辑，在此之前我们需要确保自己不会做**无用功**，所以需要看下函数 `get_interface_data` 是否在上下文代码中被调用 :
 
-![-w711](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981340754516.jpg)
+![-w711](/images/2020-09-03/15981340754516.jpg)
 
-![-w289](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981340883961.jpg)
+![-w289](/images/2020-09-03/15981340883961.jpg)
 
 该函数直接被入口函数调用，那么我们接下来就可以分析下该函数逻辑，根据注释我们了解到这里会校验token，也就是函数 `check_token`。
 
@@ -340,7 +340,7 @@ function get_json_from_file($conf_file){
 
 该函数就是从文件中读取JSON，并转为数组返回，我们想要知道具体内容就要看下初始的 `/etc/cssp_custom_image/os.json` 文件内容，但笔者这里安装默认情况下该文件是不存在的 :
 
-![-w1076](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981333535662.jpg)
+![-w1076](/images/2020-09-03/15981333535662.jpg)
 
 那在这里其返回的就是空，这时候我们再回到函数 `check_access_token`，其代码（ 代码上文中已经列出 ）逻辑当变量 `$key` 值为空并且 `$req_url == STD_CSSP_DOWN_CONF_URL`（ `define("STD_CSSP_DOWN_CONF_URL","/api/edr/sangforinter/v2/cssp/down_conf");`
  ） 的情况下变量 `$key` 值为常量 `STD_CSSP_DEFAULT_KEY`  的值，即: `define("STD_CSSP_DEFAULT_KEY","amsPnhHqfN5Ld5FU");`（ 常量定义在 `/bin/mapreduce/app/web/device_linkage/common/common.php` 文件中 ）。
@@ -349,7 +349,7 @@ function get_json_from_file($conf_file){
 
 那我们可以根据代码逻辑直接构建token值，首先是JSON内容有两个字段random、md5，还要满足字段md5的值等于`md5(字段random)`的值，所以我们要提前先设置字段random为1，随后进行md5加密并将结果赋予字段md5即可 :
 
-![-w374](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981351792870.jpg)
+![-w374](/images/2020-09-03/15981351792870.jpg)
 
 ```json
 {"random":"1", "md5":"c4ca4238a0b923820dcc509a6f75849b"}
@@ -480,13 +480,13 @@ array(2) {
 
 变量 `$interface_data` 获取了函数 `get_interface_data` 的返回值，由于`ldb_execute_app` 函数代码很多，不过多赘述，有几处授权校验的函数，简单跟踪下看下注释就能了解CSSP请求不处理授权：
 
-![-w855](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981751022649.jpg)
+![-w855](/images/2020-09-03/15981751022649.jpg)
 
-![-w665](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981750951438.jpg)
+![-w665](/images/2020-09-03/15981750951438.jpg)
 
 回调调用 `app.web.device_linkage.process_cssp` 的函数 `main` 传入变量 `$instance`、`$interface_data`（ 函数 `get_interface_data` 的返回值 ），那我们跟进 `main` 函数，又是回调函数调用 `exec_slog_action` 并传入变量 `$object`、`$params` （ 函数 `get_interface_data` 的返回值 ）。
 
-![-w542](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15981754820272.jpg)
+![-w542](/images/2020-09-03/15981754820272.jpg)
 
 这样无法造成命令执行，我们在之前 `exec_slog_action 匿名函数分析` 中了解到其要获取 `$params['data']['params']` 带入命令执行语句中，由于我们测试的是GET请求，函数 `get_interface_data` 的返回值并没有 `data['params']` 这个key，而刚好函数 `get_interface_data` 中的变量 `$interface_data["data"]` 会获取函数 `get_body_data` 处理请求正文的JSON内容转为数组的结果，所以我们修改请求方法为POST，请求正文为：`{"params":"|whoami"}`，即可进行命令注入从而执行。
 
@@ -495,7 +495,7 @@ array(2) {
 $interface_data["data"] = array('params' => '|whoami');
 ```
 
-![-w1278](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15982381570192.jpg)
+![-w1278](/images/2020-09-03/15982381570192.jpg)
 
 
 ```php

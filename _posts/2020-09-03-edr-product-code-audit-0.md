@@ -14,7 +14,7 @@ description: "某终端检测响应平台代码审计分析"
 
 2020年08月17日收到一条漏洞情报，某终端检测响应平台代码未授权RCE：`/tool/log/c.php?strip_slashes=system&host=id`
 
-![-w1120](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15977354683614.jpg)
+![-w1120](/images/2020-09-03/15977354683614.jpg)
 
 参数：**host**，可以修改任意的系统命令进行执行。
 
@@ -104,7 +104,7 @@ grep -E "\$_GET|\$_POST|\$_REQUEST" . -r --include \*.php -v | grep "extract(" -
 
 但无法真正利用，三处文件开头都有一个类似文件存活的判断，不存在代码则**die**退出，而默认环境上是存在：
 
-![-w568](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-09-03/15977415061102.jpg)
+![-w568](/images/2020-09-03/15977415061102.jpg)
 
 
 ## 最后

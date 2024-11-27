@@ -49,21 +49,21 @@ apktool d $1 && mv $1 $1.zip && unzip $1.zip "*.dex" -d $1_dex/ && cd $1_dex/ &&
 apkdec xxx.apk
 ```
 
-![apkdec](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-11-18/0.png)
+![apkdec](/images/2018-11-18/0.png)
 
 首先对`classes-dex2jar.jar`文件进反编译，但似乎在Mac下JD-GUI支持的不太好，所以我选择使用luyten（Download：https://github.com/deathmarine/Luyten/releases），如下是两张对比图：
 
-![apkdec](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-11-18/1.png)
+![apkdec](/images/2018-11-18/1.png)
 
 ## 漏洞挖掘
 
 在luyten下使用Command+G快捷键全局搜索，搜索域名寻找接口（因为这个APP需要内部人员才能登录所以从正常的入口是无法找到接口进行漏洞挖掘的）
 
-![search](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-11-18/2.png)
+![search](/images/2018-11-18/2.png)
 
 寻找了一番看见这样一个接口：
 
-![api](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-11-18/3.png)
+![api](/images/2018-11-18/3.png)
 
 二话不说访问之，提示：
 
@@ -73,7 +73,7 @@ apkdec xxx.apk
 
 不懂Java的我一脸懵，但是天下语言都是互通的，大概的了解了代码的意思（可能理解的不到位，就不说出来误导了），于是找到这样一个函数：
 
-![function](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-11-18/4.png)
+![function](/images/2018-11-18/4.png)
 
 从我的理解来看这个接口就是有这两个参数`appId、userName`，于是加入GET请求参数中请求：
 
@@ -86,7 +86,7 @@ Response:
 
 其中appId的参数值返回在了页面中，该请求响应报文`Content-Type: text/html`，所以尝试构建XSS，运气好，确实也存在XSS问题：
 
-![alert](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-11-18/5.png)
+![alert](/images/2018-11-18/5.png)
 
 # 总结
 

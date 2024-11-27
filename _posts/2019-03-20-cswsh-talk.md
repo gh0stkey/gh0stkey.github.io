@@ -25,7 +25,7 @@ WebSocket 跨域劫持漏洞，英文名：**Cross-site WebSocket Hijacking**，
 
 画了一张图让你了解：
 
-![websocket](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/CSWSH/0.png)
+![websocket](/images/CSWSH/0.png)
 
 
 ## 漏洞产生
@@ -53,7 +53,7 @@ Sec-WebSocket-Key: w4v7O6xFTi36lq3RNcgctw==
 
 2.1获取到了一个发送评论的请求 （**使用BurpSuite->Proxy模块->Websockets History查看，这里是对应的 Direction值为Outgoing为发出的请求，Incoming为发出请求对应的响应信息**）
 
-![test](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/CSWSH/1.png)
+![test](/images/CSWSH/1.png)
 
 2.2使用JavaScript创建Websocket请求
 
@@ -83,11 +83,11 @@ ws_attack();
 
 攻击流程跟以往的交互类漏洞没什么区别（点我链接读取你XXX、点我链接让你XXX）：
 
-![attack](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/CSWSH/2.png)
+![attack](/images/CSWSH/2.png)
 
 来一个圈子"铸剑实战靶场"的截图，自我体会：
 
-![success](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/CSWSH/3.png)
+![success](/images/CSWSH/3.png)
 
 ### PoC代码编写
 

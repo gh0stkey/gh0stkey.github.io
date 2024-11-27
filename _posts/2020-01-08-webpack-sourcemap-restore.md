@@ -29,11 +29,11 @@ description: "利用SourceMap还原网站原始代码(前端)"
 
 主流浏览器都自带解析Source Map文件功能（开发者工具-Sources【火狐下是调试器】）：
 
-![-w270](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-01-08/15776956466997.jpg)
+![-w270](/images/2020-01-08/15776956466997.jpg)
 
 展开可以看见具体文件和代码：
 
-![-w267](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-01-08/15776957736400.jpg)
+![-w267](/images/2020-01-08/15776957736400.jpg)
 
 但是文件过多的情况下，单个查看繁琐，不便于搜索（浏览器的开发者工具支持全局文件搜索，但搜索速度较慢），使用`restore-source-tree`可以解决这一问题。
 
@@ -51,9 +51,9 @@ sudo npm install -g
 
 在这类JS文件下通常会有一个注释：
 
-![-w568](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-01-08/15776960439534.jpg)
+![-w568](/images/2020-01-08/15776960439534.jpg)
 
-![-w717](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-01-08/15776960674880.jpg)
+![-w717](/images/2020-01-08/15776960674880.jpg)
 
 map文件就是js文件所在目录下，拼接URL即可访问，将其下载下来：
 
@@ -66,11 +66,11 @@ map文件就是js文件所在目录下，拼接URL即可访问，将其下载下
 restore-source-tree app.fedfe85b2fdd8cf29dc7.js.map
 ```
 
-![-w611](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-01-08/15776962157760.jpg)
+![-w611](/images/2020-01-08/15776962157760.jpg)
 
 成功获得原代码：
 
-![-w281](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-01-08/15776962339667.jpg)
+![-w281](/images/2020-01-08/15776962339667.jpg)
 
 
 # Reference

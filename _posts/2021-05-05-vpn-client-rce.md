@@ -28,7 +28,7 @@ description: "某VPN客户端远程下载文件执行模拟逆向分析"
 
 安装完之后访问VPN的页面，发现VPN会自动下载组件更新：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234406.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234406.png)
 
 这之间也许是因为存在着某些联系，可以深入的看一下。
 
@@ -36,19 +36,19 @@ description: "某VPN客户端远程下载文件执行模拟逆向分析"
 
 重现上述问题，通过`F12`发现当访问VPN的登陆页面会对本地`127.0.0.1`进行HTTP(s)请求：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234412.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234412.png)
 
 这些请求均为GET请求并附带着一些参数，我把它一一列下来：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234418.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234418.png)
 
 本地来看一下这个`54530`端口对应的进程是什么：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234423.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234423.png)
 
 发现这个端口是ECAgent.exe开启的，寻找到对应进程文件所在位置：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234430.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234430.png)
 
 确认这是XXX SSLVPN的程序，那么就可以将两者联系到一起，访问VPN登录首页会触发对`127.0.0.1`的访问从而引起VPN进行组件更新。
 
@@ -82,11 +82,11 @@ python -m SimpleHTTPServer
 
 其他的请求原封不动，依次请求一遍那一份URL列表（图为请求示例）：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234440.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234440.png)
 
 服务端成功收到请求，但是却出现了错误的提示：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234445.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234445.png)
 
 首先我已经验证了自己的猜想，更新地址是自己可控的，客户端确实会向我指定的服务端发送请求，但由于出现了错误，我不知道客户端访问了哪个文件，也不知道访问文件之后做了什么动作。
 
@@ -109,7 +109,7 @@ httpd.serve_forever()
 
 搭建起一个 HTTPS 环境后再次复现如上请求，服务端收到日志：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234455.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234455.png)
 
 可以看见客户端会访问两个文件：
 
@@ -154,7 +154,7 @@ https://127.0.0.1:54530/ECAgent/?op=UpdateControls&arg1=BEFORELOGIN&callback=EA_
 
 会发现客户端请求之后，将文件下载到本地并启动该程序，成功弹出计算器：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020211010234504.png)
+![](/images/2021-05-05/Pasted%20image%2020211010234504.png)
 
 ## 白盒（逆向）侧
 
@@ -166,15 +166,15 @@ https://127.0.0.1:54530/ECAgent/?op=UpdateControls&arg1=BEFORELOGIN&callback=EA_
 
 首先进行某客户端程序的安装并启动客户端程序，然后需要使用Process Hacker之类的工具查看进程树，根据某独有的特征关键词`XXX`找到打开的进程。
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302092752.png)
+![](/images/2021-05-05/Pasted%20image%2020220302092752.png)
 
 接着根据进程查看其是否启用了网络服务（端口开放），我找到了`ECAgent.exe`这个进程，并且观察到其启用了`54530`端口：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220301141006.png)
+![](/images/2021-05-05/Pasted%20image%2020220301141006.png)
 
 尝试以HTTP/HTTPS形式访问该端口，发现HTTPS访问有具体返回内容：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302093515.png)
+![](/images/2021-05-05/Pasted%20image%2020220302093515.png)
 
 故此判断该进程所启用端口为HTTP服务。
 
@@ -182,35 +182,35 @@ https://127.0.0.1:54530/ECAgent/?op=UpdateControls&arg1=BEFORELOGIN&callback=EA_
 
 现在需要找到程序开启HTTP服务的入口点，由此才能继续去跟进整个程序的逻辑，我第一时间想到的是加载的DLL文件，选择x32dbg附加进程查看其所加载的DLL文件：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302132429.png)
+![](/images/2021-05-05/Pasted%20image%2020220302132429.png)
 
 这里有很多系统的DLL文件，可以略过，优先查看与`ECAgent.exe`有关联性的DLL文件，例如其同级目录下的几个DLL（也都被加载了）：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302132839.png)
+![](/images/2021-05-05/Pasted%20image%2020220302132839.png)
 
 通过IDA打开这些DLL文件，并使用关键词`127.0.0.1`、`0.0.0.0`、`54530`搜索相关数据，找到对应使用的代码（F5伪代码，如下图中函数地址不一致时因为我在调试过程中进行了REBASE）：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220301141941.png)
+![](/images/2021-05-05/Pasted%20image%2020220301141941.png)
 
 如上图代码中，很明显这是WINSOCK编程的写法，其中的结构体`sockaddr`实际上等价于`sockaddr_in`，二者唯一的区别是`sockaddr_in`结构体有明确的成员去指定IP、端口，而`sockaddr`结构体则是使用成员`sa_data`（这是一个数组）去包含IP、端口之类的信息。
 
 如下图所示，就是一个两结构体之间的对应图，端口存放在`sa_data`的第0、1位，IP存放在`sa_data`的第2、3、4、5位：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302134038.png)
+![](/images/2021-05-05/Pasted%20image%2020220302134038.png)
 
 但是在这里，实际环境中的代码对应的端口居然为0，实际测试，发现这样的赋值是无法创建成功的：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302134453.png)
+![](/images/2021-05-05/Pasted%20image%2020220302134453.png)
 
 我陷入了沉思，莫非是找错位置了？并不是这个DLL文件去开启的Web服务？带着这一份沉思去找了很多个DLL，发现它们要么是0，要么就是其他端口，而不是对应的`54530`。
 
 在不断的试错之后，我发现了自己从未去看过`ECAgent.exe`本身，而尝试去`ECAgent.exe`搜索字符串时，也没有什么收获，于是想着既然一个DLL中用到了WINSOCK的库去创建SOCKET，那么应该都会这样去编写，所以尝试使用创建SOCKET服务特有的函数名`bind`去全局搜索，搜索结果如下图所示：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302135614.png)
+![](/images/2021-05-05/Pasted%20image%2020220302135614.png)
 
 接下来就是一个一个函数跟进去查看，最终我发现了它`sub_47FD60`，如下图所示，`sub_47FD60`是创建SOCKET的函数，但是绑定的端口是入参，所以我需要找到调用该函数的函数，也就是`sub_47FEB0`，这个函数会使用一个循环，入参的端口也会随着循环递增（应该是为了防止端口冲突的情况），当创建SOCKET成功之后就直接返回。
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302140849.png)
+![](/images/2021-05-05/Pasted%20image%2020220302140849.png)
 
 将这段伪代码编译执行一下，输出结果，就发现第一个入参的端口是`54530`，并且理论上不会有其他的软件占用这个端口，所以，我认为`ECAgent.exe`的HTTP服务端口就是`54530`。
 
@@ -218,17 +218,17 @@ https://127.0.0.1:54530/ECAgent/?op=UpdateControls&arg1=BEFORELOGIN&callback=EA_
 
 分析完HTTP服务的建立之后，我想要知道其具体如何处理请求参数，可以在此函数基础上继续回溯追踪调用链，但是这样的工作量是巨大的，不适合快速分析，所以我首先根据HTTP服务的响应字符串于IDA中搜索，再根据字符串的XREF，找到其对应使用到的函数：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220302180222.png)
+![](/images/2021-05-05/Pasted%20image%2020220302180222.png)
 
 如上图所示代码，大概意思就是有一个数组，存入了字符串和函数地址，根据入参进行类似对比，而后去调用函数。
 
 在这里第二个参数`a2`至关重要（它在条件判断、函数入参中都被使用到），所以我接着跟该函数的XREF，找到传递参数`v26`：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220303093911.png)
+![](/images/2021-05-05/Pasted%20image%2020220303093911.png)
 
 跟进处理过`v26`的函数，`sub_48E2C0`函数打开了世界的大门，根据其函数的输出字符串和代码，此函数大概表达意思就是去解析URL中的请求参数：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220303094307.png)
+![](/images/2021-05-05/Pasted%20image%2020220303094307.png)
 
 所以，这里我就可以列出这几个参数：
 
@@ -248,11 +248,11 @@ https://127.0.0.1:54530/?callback=123
 https://127.0.0.1:54530/?guid=123
 ```
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220303100233.png)
+![](/images/2021-05-05/Pasted%20image%2020220303100233.png)
 
 如上图所示，请求参数`callback`有对应的反回信息，尝试进行XSS无果，接着在IDA中搜索`callback`字符串找找是否有对应的逻辑，发现了多个URL的地址：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220303102028.png)
+![](/images/2021-05-05/Pasted%20image%2020220303102028.png)
 
 这些URL地址证明了参数`op`、`token`、`callback`可以搭配在一块去请求使用，我于此处逐渐递减参数访问（考虑到`token`参数可能会存在鉴权等操作）：
 
@@ -295,11 +295,11 @@ v8[20] = (int)sub_48F6C0;
 
 但有些操作肯定是需要另外一个参数去赋值配合的，所以我根据之前获取的参数列表在IDA中搜索字符串，我发现在这些参数中夹杂着一个双字`dd -> Define Double Word`，IDA没有将它直接解析出来：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304094407.png)
+![](/images/2021-05-05/Pasted%20image%2020220304094407.png)
 
 我选中它按下快捷键`A`将其转为字符串形式，得到了字符串`arg`：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304095308.png)
+![](/images/2021-05-05/Pasted%20image%2020220304095308.png)
 
 既然是与参数在一块的，那么我也将其作为参数添加到URL中，并与添加参数之前的URL，分别请求对比响应：
 
@@ -319,35 +319,35 @@ https://127.0.0.1:54530/?op=GetEncryptKey&arg=123
 
 CheckRelogin，添加前提示`invalid param count`，添加后就不提示：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304111032.png)
+![](/images/2021-05-05/Pasted%20image%2020220304111032.png)
 
 DoConfigure，添加前返回为空，添加后返回有内容：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304111231.png)
+![](/images/2021-05-05/Pasted%20image%2020220304111231.png)
 
 GetConfig，添加前返回有内容，添加后返回为空：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304111325.png)
+![](/images/2021-05-05/Pasted%20image%2020220304111325.png)
 
 InitECAgent，添加前返回为空，添加后返回有内容，并提示`CSCM_EXIST, init ok`：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304111430.png)
+![](/images/2021-05-05/Pasted%20image%2020220304111430.png)
 
 GetEncryptKey，添加前后返回内容没有变化：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304132748.png)
+![](/images/2021-05-05/Pasted%20image%2020220304132748.png)
 
 根据对比， `arg`确实可以作为参数去请求，但具体是什么意义，还需要去看功能实现，由于我水平有限，在阅读静态代码时遇到很多坎，所以根据自己的大概理解，判断出该程序会输出Log日志。
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304112207.png)
+![](/images/2021-05-05/Pasted%20image%2020220304112207.png)
 
 于是在磁盘文件中去寻找Log文件，最终在`C:\Users\chen\AppData\Roaming\XXX\SSL\Log`中找到了输出日志：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304112256.png)
+![](/images/2021-05-05/Pasted%20image%2020220304112256.png)
 
 根据`ECAgent.exe.log`日志记录可以看出程序处理的逻辑：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304112633.png)
+![](/images/2021-05-05/Pasted%20image%2020220304112633.png)
 
 1. CheckRelogin对arg参数进行了解密；
 2. GetConfig根据arg参数进行读取配置；
@@ -355,7 +355,7 @@ GetEncryptKey，添加前后返回内容没有变化：
 
 CheckRelogin解密正好对应着GetEncryptKey的返回加密信息，于是尝试带入并根据日志发现记录的信息不一样了，所以在这里我暂时将其搁置：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304133139.png)
+![](/images/2021-05-05/Pasted%20image%2020220304133139.png)
 
 接着来看配置VPN客户端的服务地址，尝试请求如下地址，将服务器地址指向我的机器：
 
@@ -371,17 +371,17 @@ https://127.0.0.1:54530/?op=GetConfig&arg=abc
 
 VPN客户端会去请求`https://172.20.10.3/com/WindowsModule.xml`，如下图所示就是客户端请求服务端的HTTP日志：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304125709.png)
+![](/images/2021-05-05/Pasted%20image%2020220304125709.png)
 
 并且会将该文件的XML格式转为JSON格式输出：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304125819.png)
+![](/images/2021-05-05/Pasted%20image%2020220304125819.png)
 
 #### 其他动作
 
 按照正常逻辑来说，既然可以远程读取服务器配置，应该会有一些其他的操作，例如更新、下载，于是我在IDA中继续寻找，发现了一段字符串：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304131819.png)
+![](/images/2021-05-05/Pasted%20image%2020220304131819.png)
 
 ```c
 v23 = "__check_alive__|GetEncryptKey|DoConfigure#SET LANG|DoQueryService#QUERY LANG|InitECAgent|CheckRelogin|Logout|CheckMITMAttack|SelectLines|DetectECAgent|CheckProxySetting|UpdateControls#BEFORELOGIN|DoQueryService#QUERY CONTROLS UPDATEPROCESS|DoQueryService#QUERY DKEY_DETECT|DoQueryService#QUERY LOGINSTATUS|OpenBrowser|StartEasyConnect|DoQueryService#QUERY NEEDUPDATE";
@@ -407,7 +407,7 @@ DoQueryService#QUERY NEEDUPDATE
 
 很奇怪的是这些字符串之后还有一个`#`号，例如`DoConfigure`，按照我的推测是去设置配置信息的，此处后面跟了一个`#`号+`SET LANG`，根据字面意思第一时间想到了这可能是设置语言，但如何设置？尝试了一下，此处可以带进`arg`参数，按照字面意思`SET LANG`之后应该还需要有参数值，所以请求参数值改为`SET LANG 123`，接着按照字面意思发现配合`DoQueryService#QUERY LANG`可以查询出来：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304135649.png)
+![](/images/2021-05-05/Pasted%20image%2020220304135649.png)
 
 同样，我在之前的发现中发现可以去配置VPN服务IP地址，在IP之后加上空格也可以配置指定端口：
 
@@ -425,11 +425,11 @@ https://127.0.0.1:54530/?op=UpdateControls&arg=BEFORELOGIN
 
 在HTTP服务端成功的收到了请求日志，可以看见客户端请求了很多个路径，并以POST形式请求了`/com/win/XXXUD.exe`文件：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304144029.png)
+![](/images/2021-05-05/Pasted%20image%2020220304144029.png)
 
 经过测试发现其会去主动下载该EXE并替换原XXXUD.exe文件，接着执行打开：
 
-![](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2021-05-05/Pasted%20image%2020220304144714.png)
+![](/images/2021-05-05/Pasted%20image%2020220304144714.png)
 
 就这样我成功发现了一条RCE链：
 

@@ -10,7 +10,7 @@ description: "对某攻击队的Webshell进行分析"
 
 对我⽅已拿下的攻击方⾁鸡进⾏⽇志、⽂件等分析，发现⼤部分肉鸡的网站根目录都存在 images.php，提取该文件的内容并分析：
 
-![img](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-08-21/image020.png)
+![img](/images/2019-08-21/image020.png)
 
 提出较为重要的那一段base64decode后的PHP代码进行分析：
 
@@ -24,15 +24,15 @@ if(isset($_POST['code']))substr(sha1(md5($_POST['a'])),36)=='222f'&&$_SESSION['t
 
 为了满足条件（`substr(sha1(md5($_POST['a'])),36)=='222f'`），我们可以采用钓鱼的方式等攻击方人员主动上钩（修改`images.php`即可）：
 
-![img](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-08-21/image021.png)
+![img](/images/2019-08-21/image021.png)
 
 当攻击方人员主动连接该Webshell时会将POST请求参数a的值写入到`pass.txt`中。
 
 但此方法较为被动，我们还可以在本地搭建一个环境搭配Burp去爆破获取后四位为`222f`的明文：
 
-![img](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-08-21/image022.png)
+![img](/images/2019-08-21/image022.png)
 
-![img](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-08-21/image023.png)
+![img](/images/2019-08-21/image023.png)
 
 获得了：`abc123000`、`lipeng520`、`160376`这三个密码，可利用密码对其他的肉鸡再次进行反打。
 

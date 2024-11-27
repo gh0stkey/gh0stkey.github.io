@@ -236,7 +236,7 @@ POST请求正文：money=1
 wfuzz -z range,0-20 -t 20 -d "money=1" http://127.0.0.1/dorabox/race_condition/pay.php?FUZZ
 ```
 
-![0x03](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-10-28/0x03.png)
+![0x03](/images/2018-10-28/0x03.png)
 
 
 

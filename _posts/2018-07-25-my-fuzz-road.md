@@ -14,7 +14,7 @@ description: "议题解读《我的Web应用安全模糊测试之路》"
 
 这篇议题主要围绕我做Web应用安全测试的时候所运用的一些技巧和思路。
 
-![title](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-07-25/0.png)
+![title](/images/2018-07-25/0.png)
 
 # 我的Web应用安全模糊测试之路
 
@@ -93,7 +93,7 @@ Access-Control-Allow-Methods: OPTION, POST, GET
 
 JSONP跨域劫持需要具备的条件是回调参数，而这里并没有，没有回调参数，那我就增加一个回调参数，如下是我的一份字典：
 
-![1.png](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-07-25/1.png)
+![1.png](/images/2018-07-25/1.png)
 
 使用BurpSuite的Intruder模块，进行枚举测试：
 
@@ -121,7 +121,7 @@ mstkey({"id":"1024","realname":"yudan","mobilePhone":"13888888888","cardNo":"111
 
 除了上面所说的增加回调参数以外，还可以增加什么呢？
 
-![URL](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-07-25/2.png)
+![URL](/images/2018-07-25/2.png)
 
 增加的参数和值可以**分析网站数据**、**关联网站数据**、**整合自用字典与网站字段结合**。
 
@@ -146,7 +146,7 @@ cardNo=111111111111111111
 
 初次之外还有什么？当然是使用自用字典和如上总结的进行整合：
 
-![add](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-07-25/3.png)
+![add](/images/2018-07-25/3.png)
 
 注意一点，参数都整理好之后，对应的值采用B账号的对应值，因为这样才会有差异，才能进行分析是否存在相关的漏洞，一般加参数会存在**越权**问题～
 
@@ -162,13 +162,13 @@ Set-Cookie: xxxxxx=xxxxxxx
 
 给我设置了一个Cookie，我使用这个Cookie直接就进入了后台。
 
-![hidden](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-07-25/4.png)
+![hidden](/images/2018-07-25/4.png)
 
 ### 模糊测试之删
 
 在这里有一处实际场景：
 
-![mail](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-07-25/5.png)
+![mail](/images/2018-07-25/5.png)
 
 其流程是这样的：输入邮箱->点击修改邮箱->发送修改链接到该邮箱->邮箱打开修改链接->成功修改
 
@@ -202,7 +202,7 @@ mail=admin%40gh0st.cn&token=md5(token)
 
 响应主体：
 
-![mail](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-07-25/6.png)
+![mail](/images/2018-07-25/6.png)
 
 这里输入一个错误的或者已经绑定过的会提示输入错误，然后回显请求报文中的POST Data参数mail的值～
 
@@ -226,7 +226,7 @@ mail=admin%40gh0st.cn&token=md5(token)
 
 透明化修改邮箱界面，然后获取修改邮箱按钮位置，做一个一模一样的按钮放在修改邮箱按钮之上，诱导用户点击这个按钮实际上是点击了修改邮箱的按钮～
 
-![clickjacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-07-25/7.png)
+![clickjacking](/images/2018-07-25/7.png)
 
 
 

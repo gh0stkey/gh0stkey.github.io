@@ -19,7 +19,7 @@ description: "一探短文件名"
 
 查看Windows下的短文件名：
 
-![windows](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-11-14/0.png)
+![windows](/images/2018-11-14/0.png)
 
 可以看见图中的`123123~1.TXT`，就是`1231231231231231232.txt`的短文件名表示。
 
@@ -39,7 +39,7 @@ description: "一探短文件名"
 - 对使用多个`.`隔开的长文件名，取最左端一段转换为短文件名，取最右一段前三个字符为扩展名
 - 如果存在老 OS 或程序无法读取的字符，用`_`替换
 
-![windows](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-11-14/1.png)
+![windows](/images/2018-11-14/1.png)
 
 
 

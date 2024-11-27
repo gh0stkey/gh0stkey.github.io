@@ -178,7 +178,7 @@ def main():
 
 python脚本挂在服务器跑了一段时间，也发现了一个哥们又拿走了我的博客模板：
 
-![oh,no](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2019-01-23/0.png)
+![oh,no](/images/2019-01-23/0.png)
 
 让他"用"了一段时间，便将isopen.txt的内容改为了YES（即触发了后门），其后来也与我联系，并进行了和解。
 

@@ -16,21 +16,21 @@ NTFS文件系统实现了多文件流特性，NTFS环境一个文件默认使用
 
 我们在任意一个NTFS分区下打开CMD命令提示符，输入`echo mstlab>>mst.txt:test.txt`，则在当前目录下会生成一个名为mst.txt的文件，但文件的大小为0字节，打开后也无任何内容。 
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/0.jpg)
+![ntfs](/images/2017-03-29/0.jpg)
 
 只有输入命令：notepad mst.txt:test.txt 才能看见写入的mstlab
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/1.jpg)
+![ntfs](/images/2017-03-29/1.jpg)
 
 在上边的命令中，mst.txt可以不存在，也可以是某个已存的文件，文件格式无所谓，无论是.txt还是.jpg\|.exe\|.asp都行b.txt也可以任意指定文件名以及后缀名。（可以将任意文本信息隐藏于任意文件中，只要不泄露冒号后的虚拟文件名(即test.txt)，别人是根本不会查看到隐藏信息的）
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/2.jpg)
+![ntfs](/images/2017-03-29/2.jpg)
 
 包含隐藏信息的文件仍然可以继续隐藏其它的内容，对比上例，我们仍然可以使用命令`echo 
 mstlab1>>mst.txt:test1.txt`给mst.txt建立新的隐藏信息的流文件，使用命令`notepad 
 mst.txt:test1.txt`打开后会发现mstlab1这段信息，而mstlab仍然存在于mst.txt:test.txt中丝毫不受影响
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/3.jpg)
+![ntfs](/images/2017-03-29/3.jpg)
 
 所以这里的宿主mst.txt成功的被test.txt和test1.txt所寄生，而在这里的微妙关系显而易见，宿主消失寄生消失。
 
@@ -58,7 +58,7 @@ mst.txt:test1.txt`打开后会发现mstlab1这段信息，而mstlab仍然存在�
 
 我们让上一步骤归零，重新来看看mst.txt： 
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/4.jpg)
+![ntfs](/images/2017-03-29/4.jpg)
 
 而这里的default文件流就验证了最开头的一句话，默认使用的是为命名的文件流。
 
@@ -74,7 +74,7 @@ FileStreams.exe create mst.txt vkey
 FileStreams.exe write mst.txt vkey content
 ```
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/5.jpg)
+![ntfs](/images/2017-03-29/5.jpg)
 
 再来查看文件流vkey的内容： 
 
@@ -84,7 +84,7 @@ FileStreams.exe dump mst.txt vkey 14
 
 这里的14从何而来，相信聪明的你们能明白。（文件流vkey大小 14）
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/6.png)
+![ntfs](/images/2017-03-29/6.png)
 
 最开始也说了，文件流是可以用来启动程序的，我们来试试： 
 
@@ -92,25 +92,25 @@ FileStreams.exe dump mst.txt vkey 14
 
   `FileStreams.exe append mst.txt vkey C:\Users\gh0stkey\Desktop\test\FileStreams.exe`
 
-  ![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/7.jpg)
+  ![ntfs](/images/2017-03-29/7.jpg)
 
 - 查看文件流vkey的内容，这里就看前100个字节的内容：
 
   `FileStreams.exe dump mst.txt vkey 100`
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/8.png)
+![ntfs](/images/2017-03-29/8.png)
 
 - 执行文件流vkey：
 
   顺利的执行了 `C:\Users\gh0stkey\Desktop\test\FileStreams.exe` 这个文件。 
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/9.png)
+![ntfs](/images/2017-03-29/9.png)
 
 ### 特性2
 
 自动创建空文件： 
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/10.png)
+![ntfs](/images/2017-03-29/10.png)
 
 自动创建宿主，然后寄生。  
 
@@ -122,12 +122,12 @@ FileStreams.exe dump mst.txt vkey 14
 
 如文件大小，文件创建时间，文件修改时间，文件名，文件内容等被组织成属性来存放，NTFS定义了一序列的文件属性： 
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/11.png)
+![ntfs](/images/2017-03-29/11.png)
 
 详细说明可以搜索NTFS3G，这些属性统一组织在NTFS的MFT（Master File 
 Table）上，每个MFT大小1024个字节，MFT的\$DATA属性即是前面提到的文件流，通常来说包含多个不同名字的\$DATA属性即说明该文件存在多个文件流，下图是winhex打开1.txt定位到1.txt的MFT，我们实际看一下NTFS是如何组织的：
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/12.png)
+![ntfs](/images/2017-03-29/12.png)
 
 ## Pentesting With NTFS
 
@@ -174,7 +174,7 @@ $filename= substr($url,strrpos($url,'/')+1);
 ?> 
 ```
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/13.jpg)
+![ntfs](/images/2017-03-29/13.jpg)
 
 ### 软件后门隐藏
 
@@ -186,7 +186,7 @@ $filename= substr($url,strrpos($url,'/')+1);
 
 在文件上传的时候可以直接ByPass Waf规则，但是较为鸡肋需要搭配文件包含漏洞：
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/14.png)
+![ntfs](/images/2017-03-29/14.png)
 
 #### Bypas 查杀
 
@@ -194,7 +194,7 @@ $filename= substr($url,strrpos($url,'/')+1);
 
 当然你也可以做一个持续性webshell后门，然后使用include包含起来即可利用：
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/15.jpg)
+![ntfs](/images/2017-03-29/15.jpg)
 
 ### 默认流替换
 
@@ -204,7 +204,7 @@ $filename= substr($url,strrpos($url,'/')+1);
 
 如图，我们直接执行`echo xxxx>>1.txt:`，可替换默认流:
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/16.jpg)
+![ntfs](/images/2017-03-29/16.jpg)
 
 当然如果宿主不存在，将会创建宿主并且吞噬宿主，从而成为宿主。 
 
@@ -224,7 +224,7 @@ $filename= substr($url,strrpos($url,'/')+1);
 
 1. 宿主需求，寄生虫需要宿主才可以繁衍。
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/17.jpg)
+![ntfs](/images/2017-03-29/17.jpg)
 
 2. 共存状态。宿主死亡，寄生虫随之死亡。
 
@@ -236,7 +236,7 @@ $filename= substr($url,strrpos($url,'/')+1);
 
 一开始感觉无后缀名的会被windows自动隐藏起来，所以输入命令：`echo mstsec>>hi:ourlife.txt`
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/18.png)
+![ntfs](/images/2017-03-29/18.png)
 
 然而是自己想多了。。。
 
@@ -247,7 +247,7 @@ $filename= substr($url,strrpos($url,'/')+1);
 > 命令：attrib +s +h hi
 > 解释：attrib命令的意思，+s是为文件添加系统文件属性，+h是添加隐藏属性的意思。
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/19.jpg)
+![ntfs](/images/2017-03-29/19.jpg)
 
 此方法可行，在一定的程度上保护了咱们的寄生虫。
 
@@ -261,7 +261,7 @@ $filename= substr($url,strrpos($url,'/')+1);
 www是宿主文件，无宿主就删掉www呗~
 修改后的命令：`echo gh0stkey>>:hiourlife.txt`
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/20.jpg)
+![ntfs](/images/2017-03-29/20.jpg)
 
 结果：无宿主寄生，完全是可以的。**测试3成功**
 
@@ -273,9 +273,9 @@ echo gh0stkey>>/:hiourlife.txt
 
 那么运用在实际测试中，只要目录不变动，就不会被（安全狗之类的WAF）发现
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/21.jpg)
+![ntfs](/images/2017-03-29/21.jpg)
 
-![ntfs](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-03-29/22.png)
+![ntfs](/images/2017-03-29/22.png)
 
 # END
 

@@ -26,7 +26,7 @@ description: "组合拳出击-Self型XSS变废为宝"
 
 已知Self型XSS漏洞是这样的：
 
-![self-xss](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-28/0x00.png)
+![self-xss](/images/2018-08-28/0x00.png)
 
 相信看见图片基本上已经知道这个漏洞形成的原因了，该功能点有一个编辑预览的，输入XSS的payload就触发。
 
@@ -74,7 +74,7 @@ description: "组合拳出击-Self型XSS变废为宝"
 
 “**上天总是眷顾长得帅的人**”，在这里确实也存在着点击劫持的问题：
 
-![http-response](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-28/0x01.png)
+![http-response](/images/2018-08-28/0x01.png)
 
 ### 代码思考&构建
 
@@ -103,7 +103,7 @@ HTML代码如下：
 
 界面如下：
 
-![view](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-28/0x02.png)
+![view](/images/2018-08-28/0x02.png)
 
 问题：
 
@@ -147,7 +147,7 @@ content.select();//全选内容
 
 那么界面就变成如下的样子了：
 
-![test](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-28/test.gif)
+![test](/images/2018-08-28/test.gif)
 
 注意：**这里没办法使用自动复制到剪贴板，必须需要一个按钮才行**
 
@@ -263,7 +263,7 @@ function cpy(){
 
 ## 最终演示
 
-![poc](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-28/poc.gif)
+![poc](/images/2018-08-28/poc.gif)
 
 # 总结
 

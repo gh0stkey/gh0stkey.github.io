@@ -57,7 +57,7 @@ https://www.secpulse.com/archives/74676.html
 
 简而言之，正向代理类似我们经常用到的跳板机，利用代理去访问外部的资源。
 
-![proxy](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-09-11/0x00.png)
+![proxy](/images/2018-09-11/0x00.png)
 
 **反向代理**
 
@@ -69,7 +69,7 @@ https://www.secpulse.com/archives/74676.html
 2. 网站（反向代理服务器）做处理，将请求转发给所设置的目标服务器
 3. 由请求最终到达的目标服务器响应给网站（反向代理服务器），然后再通过其返回给浏览器
 
-![proxy](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-09-11/0x01.png)
+![proxy](/images/2018-09-11/0x01.png)
 
 TIPs：
 
@@ -215,7 +215,7 @@ if __name__ == '__main__':
 	main(sys.argv[1])
 ```
 
-![res](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-09-11/0x02.png)
+![res](/images/2018-09-11/0x02.png)
 
 #  END
 

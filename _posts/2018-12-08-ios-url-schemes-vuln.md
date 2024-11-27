@@ -12,7 +12,7 @@ description: "iOS URL Schemes与漏洞的碰撞组合"
 
 iOS URL Schemes，这个单词对于大多数人来说可能有些陌生，但是类似下面这张图的提示大部分人应该都经常看见：
 
-![wechat](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/0.png)
+![wechat](/images/2018-12-08/0.png)
 
 今天要探究的就是：了解iOS URL Schemes、如何发现iOS URL Schemes、iOS URL Schemes结合漏洞案例。
 
@@ -73,31 +73,31 @@ Scheme（头）: `mst`、Action（动作）: `jump`、Parameter（参数）: `ur
 
 Mac上先安装Apple Configurator 2，然后你需要在该软件中登录你的Apple账户：
 
-![login](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/1.png)
+![login](/images/2018-12-08/1.png)
 
 使用iPhone充电线将手机连接Mac，这时候软件中就会显示已经连接Mac的设备：
 
-![iphone](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/2.png)
+![iphone](/images/2018-12-08/2.png)
 
 假设你需要获取微信的URL Schemes，那么你的手机已经安装过了微信，然后使用该软件进行添加，选中设备点击添加按钮，选择应用：
 
-![add](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/3.png)
+![add](/images/2018-12-08/3.png)
 
 搜索微信，选中添加：
 
-![add wechat](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/4.png)
+![add wechat](/images/2018-12-08/4.png)
 
 当你下载完成看见如下提示的时候，在Finder中按快捷键`Command+Shift+G`，输入`~/资源库/Group Containers/K36BKF7T3D.group.com.apple.configurator/Library/Caches/Assets/TemporaryItems/MobileApps/`
 
-![tip](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/5.png)
+![tip](/images/2018-12-08/5.png)
 
 软件下载的微信ipa文件就存在该文件夹中：
 
-![ipa](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/6.png)
+![ipa](/images/2018-12-08/6.png)
 
 进入文件夹将ipa文件复制到其他地方：
 
-![move](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/7.png)
+![move](/images/2018-12-08/7.png)
 
 然后回到Apple Configurator 2的提示，点击停止即可。
 
@@ -105,11 +105,11 @@ Mac上先安装Apple Configurator 2，然后你需要在该软件中登录你的
 
 将IPA包后缀名修改为ZIP，然后解压，进入Payload目录会看见一个.APP后缀名文件，选中文件右击显示包内容：
 
-![view](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/8.png)
+![view](/images/2018-12-08/8.png)
 
 找到Info.plist文件并打开，搜索关键词`URLSchemes`：
 
-![find](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/9.png)
+![find](/images/2018-12-08/9.png)
 
 被`String`标签所包含的就是微信的URL Schemes：
 
@@ -133,13 +133,13 @@ Mac上先安装Apple Configurator 2，然后你需要在该软件中登录你的
 
 打开这些子域名，利用Chrome的开发者工具(F12)切换为手机模式视图，这样就能模拟手机去访问了：
 
-![Chrome](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/10.png)
+![Chrome](/images/2018-12-08/10.png)
 
 那在这里可以在该页面的HTML代码中寻找URL Schemes（前提是你已经知道了基本的URL Schemes）
 
 在这里我从页面的JavaScript代码中发现了很多URL Schemes：
 
-![URL Schemes](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/11.png)
+![URL Schemes](/images/2018-12-08/11.png)
 
 有些还有参数，可以根据命名来猜这些URL Schemes的含义，例如`path: "mst://jump/core/web/jump"`，就可以知道这个是做Web跳转的，那跳转到哪个地址是什么参数控制呢？下面也有对应的告诉我们是`url`参数去控制，也就组成了这样一个URL Scheme: `mst://jump/core/web/jump?url=https://gh0st.cn`
 
@@ -147,11 +147,11 @@ Mac上先安装Apple Configurator 2，然后你需要在该软件中登录你的
 
 现在很多网站都支持二维码登录，就比如如下这个网站：
 
-![qrlcode](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/12.png)
+![qrlcode](/images/2018-12-08/12.png)
 
 保存该二维码进行二维码解析：
 
-![text](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/13.png)
+![text](/images/2018-12-08/13.png)
 
 解析得出这是一个URL Scheme，修改json参数url的值为我的网站尝试在浏览器中打开成功的触发了跳转APP，并且在APP中访问了我的网站。
 
@@ -161,7 +161,7 @@ Mac上先安装Apple Configurator 2，然后你需要在该软件中登录你的
 
 至于安卓的APK的逆向可以参考我之前的一篇文章< [打造Mac下APK逆向环境到实战接口XSS挖掘](https://gh0st.cn/archives/2018-11-18/1) >，可以在源代码中、所有文件内容中搜索URL Schemes。
 
-![search](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/14.png)
+![search](/images/2018-12-08/14.png)
 
 # 漏洞案例
 
@@ -181,7 +181,7 @@ window.location='URL Schemes';
 
 在做一次漏洞挖掘的时候也碰见了很多次这种问题，大概的描述下就是我找到了能在APP中打开网页的入口方式（例如：二维码扫描、URL Schemes动作），让APP访问到我的地址，这样我就可以直接获取到APP中登录后的凭证信息。
 
-![gettoken](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-12-08/15.png)
+![gettoken](/images/2018-12-08/15.png)
 
 利用方式和URL跳转的方式是一样的；关于这方面漏洞产生原理得出一个可能“**不太严谨的结论**”：**APP在做HTTP请求的时候默认所有访问的都是信任域，所以带上了本身已经登录的凭证去请求了**。
 

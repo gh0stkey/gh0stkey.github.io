@@ -25,7 +25,7 @@ description: "GET请求Referer限制绕过总结"
 
 Referer是请求头的一部分，假设A站上有B站的链接，在A站上点击B站的链接，请求头会带有Referer，而Referer的值为A站的链接；这也就是为什么上文所说的场景，遇见了Referer的限制就可能GG了。
 
-![0](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x00.png)
+![0](/images/2018-08-01/0x00.png)
 
 ## 绕过之道
 
@@ -33,7 +33,7 @@ Referer是请求头的一部分，假设A站上有B站的链接，在A站上点�
 
 一个实际场景：
 
-![referer](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x01.png)
+![referer](/images/2018-08-01/0x01.png)
 
 先来说说一些常规化的东西：
 
@@ -41,19 +41,19 @@ Referer是请求头的一部分，假设A站上有B站的链接，在A站上点�
 
 使用子域名的方式进行绕过：
 
-![subdomain](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x02.png)
+![subdomain](/images/2018-08-01/0x02.png)
 
 - `域名前增加`
 
 在域名前面增加随机的a-z和0-9也可以进绕过：
 
-![rand](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x03.png)
+![rand](/images/2018-08-01/0x03.png)
 
 - `？号` 
 
 将域名作为GET请求参数进行绕过：
 
-![subdomain](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x04.png)
+![subdomain](/images/2018-08-01/0x04.png)
 
 ### 打破常规
 
@@ -100,7 +100,7 @@ Referer是请求头的一部分，假设A站上有B站的链接，在A站上点�
 </html>
 ```
 
-![null referer](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x05.png)
+![null referer](/images/2018-08-01/0x05.png)
 
 #### 与其他资源组合
 
@@ -122,11 +122,11 @@ Referer是请求头的一部分，假设A站上有B站的链接，在A站上点�
 
 在个人中心处可以编辑个人的微博地址：
 
-![weibo](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x06.png)
+![weibo](/images/2018-08-01/0x06.png)
 
 微博地址是对外的公开信息：
 
-![weibo](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x07.png)
+![weibo](/images/2018-08-01/0x07.png)
 
 那么结合一下点击劫持或者用户常规的点击了～那就GGGGGGG了～
 
@@ -155,7 +155,7 @@ window.open("url");
 
 `http://test.vulkey.cn/link.php?url=http://www.hi-ourlife.com`
 
-![js](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x08.png)
+![js](/images/2018-08-01/0x08.png)
 
 2. 我有一个反射XSS漏洞：
 
@@ -163,21 +163,21 @@ window.open("url");
 
 当 `referer = a.com` :
 
-![xss](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x09.png)
+![xss](/images/2018-08-01/0x09.png)
 
 当 `referer = vulkey.cn` :
 
-![xss](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x10.png)
+![xss](/images/2018-08-01/0x10.png)
 
 当 `referer = *.vulkey.cn` :
 
-![xss](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x11.png)
+![xss](/images/2018-08-01/0x11.png)
 
 这个接口验证了Referer使用之前的方法没办法绕过，于是采用组合拳搭配。 
 
 于是有了如下的构建：`http://test.vulkey.cn/link.php?url=http://vulkey.cn/jsonp.php?callback=vulkey<svg/onload=alert(1)>`
 
-![xss](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x12.png)
+![xss](/images/2018-08-01/0x12.png)
 
 ###### JSONP劫持+反射XSS+URL跳转
 
@@ -202,7 +202,7 @@ window.open("url");
 
 `http://test.vulkey.cn/link.php?url=http://vulkey.cn/jsonp.php?callback=%253Cscript%253Efunction%2bvulkey%28data%29%7Balert%28JSON.stringify%28data%29%29%3B%7D%253C%2fscript%253E%253Cscript%2bsrc%3D%2522http%3A%2f%2fvulkey.cn%2fjsonp.php%3Fcallback%3Dvulkey%2522%253E%253C%2fscript%253E`
 
-![bypass](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-08-01/0x13.png)
+![bypass](/images/2018-08-01/0x13.png)
 
 也就是说在这里JS的URL跳转解决了XSS的Referer限制问题，而XSS又解决了JSONP接口的Referer限制问题，这是一个联合组合拳。如果你发现的XSS没有Referer限制则不需要这么"麻烦"。
 

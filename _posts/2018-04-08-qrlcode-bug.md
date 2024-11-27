@@ -149,7 +149,7 @@ iframe {
 
 示例结果：
 
-![https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-04-08/0x00.png](https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2018-04-08/0x00.png)
+![/images/2018-04-08/0x00.png](/images/2018-04-08/0x00.png)
 
 
 
