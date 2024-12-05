@@ -164,10 +164,10 @@
 <loc>http://localhost:4000/about.html</loc>
 </url>
 <url>
-<loc>http://localhost:4000/</loc>
+<loc>http://localhost:4000/friends.html</loc>
 </url>
 <url>
-<loc>http://localhost:4000/links.html</loc>
+<loc>http://localhost:4000/</loc>
 </url>
 <url>
 <loc>http://localhost:4000/index/2/</loc>
