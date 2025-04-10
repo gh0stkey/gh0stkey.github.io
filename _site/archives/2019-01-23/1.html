@@ -49,8 +49,8 @@
 	<span class="nb">reload</span><span class="p">(</span><span class="n">sys</span><span class="p">)</span>
 	<span class="n">sys</span><span class="p">.</span><span class="n">setdefaultencoding</span><span class="p">(</span><span class="s">'utf8'</span><span class="p">)</span>
 
-	<span class="n">subject</span> <span class="o">=</span> <span class="s">u'博客监控到有人偷模板！'</span>
-	<span class="n">body</span> <span class="o">=</span> <span class="s">u"[小偷信息]</span><span class="se">\n</span><span class="s">Domain: {0} IP: {1}"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">ip</span><span class="p">)</span>
+	<span class="n">subject</span> <span class="o">=</span> <span class="sa">u</span><span class="s">'博客监控到有人偷模板！'</span>
+	<span class="n">body</span> <span class="o">=</span> <span class="sa">u</span><span class="s">"[小偷信息]</span><span class="se">\n</span><span class="s">Domain: {0} IP: {1}"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">ip</span><span class="p">)</span>
 
 	<span class="n">encoding</span> <span class="o">=</span> <span class="s">'utf-8'</span>
 	<span class="n">mail</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">body</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="p">),</span><span class="s">'plain'</span><span class="p">,</span><span class="n">encoding</span><span class="p">)</span>
@@ -64,11 +64,11 @@
 		<span class="n">smtp</span><span class="p">.</span><span class="n">ehlo</span><span class="p">()</span>
 		<span class="n">smtp</span><span class="p">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span><span class="n">password</span><span class="p">)</span>
 		<span class="n">smtp</span><span class="p">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">fromMail</span><span class="p">,</span><span class="n">toMail</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">','</span><span class="p">),</span><span class="n">mail</span><span class="p">.</span><span class="n">as_string</span><span class="p">())</span>
-		<span class="k">print</span> <span class="s">u"邮件已发送，监控信息："</span>
+		<span class="k">print</span> <span class="sa">u</span><span class="s">"邮件已发送，监控信息："</span>
 		<span class="k">print</span> <span class="n">body</span>
 	<span class="k">except</span> <span class="nb">Exception</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
 		<span class="k">print</span> <span class="n">e</span>
-		<span class="k">print</span> <span class="s">u"发送失败，监控信息："</span>
+		<span class="k">print</span> <span class="sa">u</span><span class="s">"发送失败，监控信息："</span>
 		<span class="k">print</span> <span class="n">body</span>
 	<span class="k">finally</span><span class="p">:</span>
 		<span class="n">smtp</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>

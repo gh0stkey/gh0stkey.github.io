@@ -57,21 +57,21 @@
 
 </code></pre></div></div> <p>其中<code class="language-plaintext highlighter-rouge">/web</code>为Web服务目录，文件均可通过<code class="language-plaintext highlighter-rouge">HTTP服务</code>进行访问，顾我们从该目录下的文件下手审计。</p> <h3 id="ldb_mapreduce_invoke-函数分析">ldb_mapreduce_invoke 函数分析</h3> <p>不是一把梭的0day都不叫0day，寻找能勾起兴趣的文件，发现了它（文件名带有<code class="language-plaintext highlighter-rouge">upload</code>）<code class="language-plaintext highlighter-rouge">/bin/web/divideUploader.php</code>：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'REQUEST_METHOD'</span><span class="p">]</span><span class="o">==</span><span class="s2">"POST"</span><span class="p">){</span>
     <span class="c1">//超时开关打开，后台登录时间不刷新</span>
-    <span class="nv">$update</span> <span class="o">=</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'auto'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'auto'</span><span class="p">]</span> <span class="o">==</span> <span class="nx">AUTO_FLASH_SWITCH</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="nx">ldb_mapreduce_invoke</span><span class="p">(</span><span class="s1">'call_method'</span><span class="p">,</span><span class="s1">'util.common.auth'</span><span class="p">,</span> <span class="s1">'app_auth_check'</span><span class="p">,</span> <span class="nv">$update</span><span class="p">);</span>
-    <span class="o">...</span>
+    <span class="nv">$update</span> <span class="o">=</span> <span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">'auto'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'auto'</span><span class="p">]</span> <span class="o">==</span> <span class="no">AUTO_FLASH_SWITCH</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="nf">ldb_mapreduce_invoke</span><span class="p">(</span><span class="s1">'call_method'</span><span class="p">,</span><span class="s1">'util.common.auth'</span><span class="p">,</span> <span class="s1">'app_auth_check'</span><span class="p">,</span> <span class="nv">$update</span><span class="p">);</span>
+    <span class="mf">...</span>
 <span class="p">}</span>
-</code></pre></div></div> <p>访问没有做限制，只要HTTP请求类型为<code class="language-plaintext highlighter-rouge">POST</code>就进入上传功能代码逻辑流程，三元运算很简单不用看，我们来看下这段代码：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">ldb_mapreduce_invoke</span><span class="p">(</span><span class="s1">'call_method'</span><span class="p">,</span><span class="s1">'util.common.auth'</span><span class="p">,</span> <span class="s1">'app_auth_check'</span><span class="p">,</span> <span class="nv">$update</span><span class="p">);</span>
+</code></pre></div></div> <p>访问没有做限制，只要HTTP请求类型为<code class="language-plaintext highlighter-rouge">POST</code>就进入上传功能代码逻辑流程，三元运算很简单不用看，我们来看下这段代码：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">ldb_mapreduce_invoke</span><span class="p">(</span><span class="s1">'call_method'</span><span class="p">,</span><span class="s1">'util.common.auth'</span><span class="p">,</span> <span class="s1">'app_auth_check'</span><span class="p">,</span> <span class="nv">$update</span><span class="p">);</span>
 </code></pre></div></div> <p>跟进函数：<code class="language-plaintext highlighter-rouge">ldb_mapreduce_invoke</code>，文件：<code class="language-plaintext highlighter-rouge">/bin/mapreduce/core.php</code>（<em>line 19</em>）：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
  * 全局的mapreduce对象，提供所有map/reduce工作器件的注册和获取接口
  */</span>
-<span class="nv">$ldb_mapreduce</span> <span class="o">=</span> <span class="p">(</span><span class="nx">object</span><span class="p">)</span><span class="k">array</span><span class="p">();</span>
+<span class="nv">$ldb_mapreduce</span> <span class="o">=</span> <span class="p">(</span><span class="n">object</span><span class="p">)</span><span class="k">array</span><span class="p">();</span>
 
 <span class="cm">/*
  * 调用mapduce接口，变参
  * @return mix 返回调用接口的返回值
  */</span>
-<span class="k">function</span> <span class="nf">ldb_mapreduce_invoke</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">function</span> <span class="n">ldb_mapreduce_invoke</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">global</span> <span class="nv">$ldb_mapreduce</span><span class="p">;</span>
     
     <span class="nv">$params</span> <span class="o">=</span> <span class="nb">func_get_args</span><span class="p">();</span>
@@ -89,14 +89,14 @@
 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">property_exists</span><span class="p">(</span><span class="nv">$ldb_mapreduce</span><span class="p">,</span> <span class="nv">$func</span><span class="p">))</span> <span class="p">{</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre></div></div> <p>最后<code class="language-plaintext highlighter-rouge">call_user_func</code>函数回调，调用<code class="language-plaintext highlighter-rouge">$ldb_mapreduce-&gt;call_method</code>方法，继续跟进此方法（ <em>line 239</em> ）：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ldb_mapreduce</span><span class="o">-&gt;</span><span class="na">call_method</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$params</span><span class="p">)</span> <span class="p">{</span>
+</code></pre></div></div> <p>最后<code class="language-plaintext highlighter-rouge">call_user_func</code>函数回调，调用<code class="language-plaintext highlighter-rouge">$ldb_mapreduce-&gt;call_method</code>方法，继续跟进此方法（ <em>line 239</em> ）：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ldb_mapreduce</span><span class="o">-&gt;</span><span class="n">call_method</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$params</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$params</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="nv">$object</span> <span class="o">=</span> <span class="nb">array_shift</span><span class="p">(</span><span class="nv">$params</span><span class="p">);</span>
     <span class="nv">$id</span>     <span class="o">=</span> <span class="nb">array_shift</span><span class="p">(</span><span class="nv">$params</span><span class="p">);</span>
     <span class="nv">$method</span> <span class="o">=</span> <span class="nb">array_shift</span><span class="p">(</span><span class="nv">$params</span><span class="p">);</span>
-    <span class="nv">$object</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$object</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$object</span><span class="p">,</span> <span class="nv">$id</span><span class="p">));</span>
+    <span class="nv">$object</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$object</span><span class="o">-&gt;</span><span class="n">get</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$object</span><span class="p">,</span> <span class="nv">$id</span><span class="p">));</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_object</span><span class="p">(</span><span class="nv">$object</span><span class="p">)</span> 
         <span class="o">||</span> <span class="o">!</span><span class="nb">property_exists</span><span class="p">(</span><span class="nv">$object</span><span class="p">,</span> <span class="nv">$method</span><span class="p">)</span>
         <span class="o">||</span> <span class="o">!</span><span class="nb">is_callable</span><span class="p">(</span><span class="nv">$object</span><span class="o">-&gt;</span><span class="nv">$method</span><span class="p">))</span> <span class="p">{</span>
@@ -112,7 +112,7 @@
  * @param array $params 参数数组，array(对象, 名称)
  * @return callable 返回组件构造器，如果没有构造器返回null
  */</span>
-<span class="nv">$ldb_mapreduce</span><span class="o">-&gt;</span><span class="na">get</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$params</span><span class="p">)</span> <span class="nx">use</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$store_root</span><span class="p">)</span> <span class="p">{</span>
+<span class="nv">$ldb_mapreduce</span><span class="o">-&gt;</span><span class="n">get</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$params</span><span class="p">)</span> <span class="k">use</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$store_root</span><span class="p">)</span> <span class="p">{</span>
 <span class="c1">//ldb_info("get params: ".json_encode($params));</span>
     <span class="k">list</span><span class="p">(</span><span class="nv">$object</span><span class="p">,</span> <span class="nv">$id</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$params</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">strstr</span><span class="p">(</span><span class="nv">$id</span><span class="p">,</span> <span class="s2">"@"</span><span class="p">))</span> <span class="p">{</span>
@@ -129,7 +129,7 @@
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">property_exists</span><span class="p">(</span><span class="nv">$object</span><span class="p">,</span> <span class="nv">$component</span><span class="p">)</span> 
         <span class="o">||</span> <span class="o">!</span><span class="nb">array_key_exists</span><span class="p">(</span><span class="nv">$id</span><span class="p">,</span> <span class="nv">$object</span><span class="o">-&gt;</span><span class="nv">$component</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nv">$base</span> <span class="o">==</span> <span class="s2">"ldb"</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nv">$php</span> <span class="o">=</span> <span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">)</span><span class="o">.</span><span class="s2">"/</span><span class="nv">$path</span><span class="s2">.php"</span><span class="p">;</span>
+            <span class="nv">$php</span> <span class="o">=</span> <span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">)</span><span class="mf">.</span><span class="s2">"/</span><span class="nv">$path</span><span class="s2">.php"</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nv">$php</span> <span class="o">=</span> <span class="s2">"</span><span class="nv">$store_root</span><span class="s2">/</span><span class="nv">$base</span><span class="s2">/bin/</span><span class="nv">$path</span><span class="s2">.php"</span><span class="p">;</span>
         <span class="p">}</span>
@@ -141,13 +141,13 @@
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">try</span> <span class="p">{</span>
                 <span class="k">require_once</span><span class="p">(</span><span class="nv">$php</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Error</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">ldb_die</span><span class="p">(</span><span class="nv">$e</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nc">Error</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nf">ldb_die</span><span class="p">(</span><span class="nv">$e</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="c1">//ldb_info("id: ".$id.",component: ".$object-&gt;$component);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">array_key_exists</span><span class="p">(</span><span class="nv">$id</span><span class="p">,</span> <span class="nv">$object</span><span class="o">-&gt;</span><span class="nv">$component</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">ldb_info</span><span class="p">(</span><span class="s2">"! array_key_exists"</span><span class="p">);</span>
+            <span class="nf">ldb_info</span><span class="p">(</span><span class="s2">"! array_key_exists"</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -155,18 +155,18 @@
     <span class="k">return</span> <span class="nv">$components</span><span class="p">[</span><span class="nv">$id</span><span class="p">];</span>
 <span class="p">};</span>
 </code></pre></div></div> <p>由于代码过长，很多可以直接在本地调试输出，大概解释下这里的意思，就是将<code class="language-plaintext highlighter-rouge">$id = 'util.common.auth';</code>处理变成路径<code class="language-plaintext highlighter-rouge">$php = dirname(__FILE__)."/$path.php";</code>，结果就是<code class="language-plaintext highlighter-rouge">/bin/mapreduce/util/common/auth.php</code></p> <p><img src="/images/2020-09-03/15979094220269.jpg" alt="-w1170" /></p> <p>接着<strong>require_once（ 包含 ）</strong>这个文件，最后将<code class="language-plaintext highlighter-rouge">auth.php</code>文件公开的注册接口返回：</p> <p><img src="/images/2020-09-03/15979127711439.jpg" alt="-w712" /></p> <p>至此，我们对<code class="language-plaintext highlighter-rouge">ldb_mapreduce_invoke</code>函数的分析就差不多了，最后又是一个<code class="language-plaintext highlighter-rouge">call_user_func</code>回调函数调用<code class="language-plaintext highlighter-rouge">auth.php</code>接口<code class="language-plaintext highlighter-rouge">app_auth_check</code>：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">return</span> <span class="nb">call_user_func_array</span><span class="p">(</span><span class="nv">$func</span><span class="p">,</span> <span class="nv">$params</span><span class="p">);</span>
-</code></pre></div></div> <h3 id="app_auth_check-函数分析">app_auth_check 函数分析</h3> <p><code class="language-plaintext highlighter-rouge">app_auth_check</code>函数就是检测当前是否具备访问接口权限下，代码如下：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$app_auth_check</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$update</span><span class="o">=</span><span class="kc">true</span><span class="p">)</span> <span class="nx">use</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$login_authed_check</span><span class="p">,</span>
+</code></pre></div></div> <h3 id="app_auth_check-函数分析">app_auth_check 函数分析</h3> <p><code class="language-plaintext highlighter-rouge">app_auth_check</code>函数就是检测当前是否具备访问接口权限下，代码如下：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$app_auth_check</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$update</span><span class="o">=</span><span class="kc">true</span><span class="p">)</span> <span class="k">use</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$login_authed_check</span><span class="p">,</span>
                                         <span class="o">&amp;</span><span class="nv">$sess_keyvalue_get</span><span class="p">,</span>
                                         <span class="o">&amp;</span><span class="nv">$timeout_check</span><span class="p">,</span>
                                         <span class="o">&amp;</span><span class="nv">$dc_session_destroy</span><span class="p">,</span>
                                         <span class="o">&amp;</span><span class="nv">$login_redirect</span><span class="p">,</span>
                                         <span class="o">&amp;</span><span class="nv">$super_ip_check</span><span class="p">){</span>
     <span class="c1">// 自动化放开权限检查</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">ldb_auto_check</span><span class="p">())</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nf">ldb_auto_check</span><span class="p">())</span> <span class="p">{</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="c1">// 如果是后台调用app，则不进行权限检查</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">ldb_is_cli</span><span class="p">())</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nf">ldb_is_cli</span><span class="p">())</span> <span class="p">{</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="c1">//如果是通过特权IP登陆，则不需要进行权限检查</span>
@@ -202,7 +202,7 @@
     <span class="k">if</span><span class="p">(</span><span class="nv">$is_super_ip</span><span class="p">){</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">}</span>
-</code></pre></div></div> <p>跟进函数<code class="language-plaintext highlighter-rouge">super_ip_check</code>，发现这里获取的了HTTP请求头（<code class="language-plaintext highlighter-rouge">$_SERVER["HTTP_Y_FORWARDED_FOR"] = Y-Forwarded-For</code>）与<code class="language-plaintext highlighter-rouge">$super_ip</code>进行判断：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$super_ip_check</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> <span class="nx">use</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$get_super_ip</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$super_user_check</span><span class="p">){</span>
+</code></pre></div></div> <p>跟进函数<code class="language-plaintext highlighter-rouge">super_ip_check</code>，发现这里获取的了HTTP请求头（<code class="language-plaintext highlighter-rouge">$_SERVER["HTTP_Y_FORWARDED_FOR"] = Y-Forwarded-For</code>）与<code class="language-plaintext highlighter-rouge">$super_ip</code>进行判断：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$super_ip_check</span> <span class="o">=</span> <span class="k">function</span><span class="p">()</span> <span class="k">use</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$get_super_ip</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$super_user_check</span><span class="p">){</span>
     <span class="nv">$super_ip</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$get_super_ip</span><span class="p">);</span>
     <span class="nv">$user_addr</span> <span class="o">=</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s2">"HTTP_Y_FORWARDED_FOR"</span><span class="p">];</span>
     <span class="k">if</span><span class="p">(</span><span class="nv">$user_addr</span> <span class="o">==</span> <span class="nv">$super_ip</span><span class="p">){</span>
@@ -213,11 +213,11 @@
     <span class="p">}</span>
 <span class="p">};</span>
 </code></pre></div></div> <p>阅读以上代码知道<code class="language-plaintext highlighter-rouge">$super_ip</code>是通过回调函数调用<code class="language-plaintext highlighter-rouge">get_super_ip</code>的结果，这里还需要再跟进<code class="language-plaintext highlighter-rouge">get_super_ip</code>函数：</p> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$get_super_ip</span> <span class="o">=</span> <span class="k">function</span><span class="p">(){</span>
-    <span class="nv">$super_ip_config</span> <span class="o">=</span> <span class="nx">ldb_ext_root</span><span class="p">()</span><span class="o">.</span><span class="s2">"../../dc/config/cssp_super_ip.ini"</span><span class="p">;</span>
+    <span class="nv">$super_ip_config</span> <span class="o">=</span> <span class="nf">ldb_ext_root</span><span class="p">()</span><span class="mf">.</span><span class="s2">"../../dc/config/cssp_super_ip.ini"</span><span class="p">;</span>
     <span class="nv">$super_ip</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
     <span class="k">if</span><span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$super_ip_config</span><span class="p">)){</span>
         <span class="nv">$super_config_data</span> <span class="o">=</span> <span class="nb">parse_ini_file</span><span class="p">(</span><span class="nv">$super_ip_config</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-        <span class="nv">$super_ip</span> <span class="o">=</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$super_config_data</span><span class="p">[</span><span class="s2">"config"</span><span class="p">][</span><span class="s2">"super_ip"</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$super_config_data</span><span class="p">[</span><span class="s2">"config"</span><span class="p">][</span><span class="s2">"super_ip"</span><span class="p">]</span> <span class="o">:</span> <span class="s2">""</span><span class="p">;</span>
+        <span class="nv">$super_ip</span> <span class="o">=</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$super_config_data</span><span class="p">[</span><span class="s2">"config"</span><span class="p">][</span><span class="s2">"super_ip"</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$super_config_data</span><span class="p">[</span><span class="s2">"config"</span><span class="p">][</span><span class="s2">"super_ip"</span><span class="p">]</span> <span class="o">:</span> <span class="s2">""</span><span class="p">;</span>
     <span class="p">}</span>
     
     <span class="k">return</span> <span class="nv">$super_ip</span><span class="p">;</span>
