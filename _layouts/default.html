@@ -7,6 +7,12 @@ published: true
 <html lang="en">
 	<head>
 		{% include head.html %}
+		<script>
+			window.giscusThemeConfig = {
+				light: "{{ site.giscus.light_theme | default: 'light' }}",
+				dark: "{{ site.giscus.dark_theme | default: 'dark' }}"
+			};
+		</script>
 		<script src="{{ '/assets/js/theme.js' | prepend: site.baseurl }}"></script>
 	</head>
 

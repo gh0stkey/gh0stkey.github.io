@@ -42,7 +42,8 @@ giscus:
   reactions_enabled: "0"
   emit_metadata:    "0"
   input_position:   "top"
-  theme:            "light_protanopia"
+  light_theme:      "light_protanopia"
+  dark_theme:       "dark_tritanopia"
   lang:             "zh-CN"
 
 defaults:

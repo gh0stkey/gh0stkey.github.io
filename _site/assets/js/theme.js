@@ -16,9 +16,15 @@ const updateIcons = (theme) => {
 const updateGiscusTheme = (theme) => {
   const iframe = document.querySelector('iframe.giscus-frame');
   if (!iframe) return;
+  
+  let giscusTheme = theme === 'dark' ? 'dark' : 'light';
+  if (window.giscusThemeConfig) {
+    giscusTheme = theme === 'dark' ? window.giscusThemeConfig.dark : window.giscusThemeConfig.light;
+  }
+
   const message = {
     setConfig: {
-      theme: theme === 'dark' ? 'dark' : 'light'
+      theme: giscusTheme
     }
   };
   iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
@@ -39,10 +45,6 @@ const initTheme = () => {
   const theme = savedTheme || systemTheme;
   document.documentElement.setAttribute('data-theme', theme);
   updateIcons(theme);
-  // Giscus loads asynchronously, so we might need to wait or let it handle its own initial theme based on system preference
-  // But if we have a saved preference, we should try to enforce it once Giscus loads.
-  // For now, the script tag in comments.html uses 'preferred_color_scheme' or we can set it to a specific value.
-  // To ensure consistency, we can try to update it after a delay or rely on the toggle.
 };
 
 initTheme();
@@ -55,4 +57,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ensure icons are correct on load (in case initTheme ran before DOM was ready)
   const currentTheme = document.documentElement.getAttribute('data-theme');
   updateIcons(currentTheme);
+
+  // Sync Giscus theme when it loads
+  const giscusContainer = document.getElementById('giscus-container');
+  if (giscusContainer) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length) {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (iframe) {
+            iframe.addEventListener('load', () => {
+              const currentTheme = document.documentElement.getAttribute('data-theme');
+              updateGiscusTheme(currentTheme);
+            });
+            observer.disconnect();
+          }
+        }
+      });
+    });
+    observer.observe(giscusContainer, { childList: true });
+  }
 });
