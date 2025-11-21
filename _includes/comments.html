@@ -1,18 +1,27 @@
 {% if site.giscus.repo %}
 <div id="giscus-container" class="giscus"></div>
-<script src="https://giscus.app/client.js"
-        data-repo="{{ site.giscus.repo }}"
-        data-repo-id="{{ site.giscus.repo_id }}"
-        data-category="{{ site.giscus.category }}"
-        data-category-id="{{ site.giscus.category_id }}"
-        data-mapping="{{ site.giscus.mapping | default: 'pathname' }}"
-        data-strict="{{ site.giscus.strict | default: '0' }}"
-        data-reactions-enabled="{{ site.giscus.reactions_enabled | default: '1' }}"
-        data-emit-metadata="{{ site.giscus.emit_metadata | default: '0' }}"
-        data-input-position="{{ site.giscus.input_position | default: 'bottom' }}"
-        data-theme="{{ site.giscus.theme | default: 'preferred_color_scheme' }}"
-        data-lang="{{ site.giscus.lang | default: 'zh-CN' }}"
-        crossorigin="anonymous"
-        async>
+<script>
+  (function() {
+    const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const giscusTheme = theme === 'dark' ? '{{ site.giscus.dark_theme | default: "dark" }}' : '{{ site.giscus.light_theme | default: "light" }}';
+    
+    const script = document.createElement('script');
+    script.src = "https://giscus.app/client.js";
+    script.setAttribute("data-repo", "{{ site.giscus.repo }}");
+    script.setAttribute("data-repo-id", "{{ site.giscus.repo_id }}");
+    script.setAttribute("data-category", "{{ site.giscus.category }}");
+    script.setAttribute("data-category-id", "{{ site.giscus.category_id }}");
+    script.setAttribute("data-mapping", "{{ site.giscus.mapping | default: 'pathname' }}");
+    script.setAttribute("data-strict", "{{ site.giscus.strict | default: '0' }}");
+    script.setAttribute("data-reactions-enabled", "{{ site.giscus.reactions_enabled | default: '1' }}");
+    script.setAttribute("data-emit-metadata", "{{ site.giscus.emit_metadata | default: '0' }}");
+    script.setAttribute("data-input-position", "{{ site.giscus.input_position | default: 'bottom' }}");
+    script.setAttribute("data-lang", "{{ site.giscus.lang | default: 'zh-CN' }}");
+    script.setAttribute("data-theme", giscusTheme);
+    script.setAttribute("crossorigin", "anonymous");
+    script.async = true;
+    
+    document.getElementById('giscus-container').appendChild(script);
+  })();
 </script>
 {% endif %}
