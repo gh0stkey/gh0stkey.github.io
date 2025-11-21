@@ -31,6 +31,20 @@ plugins:
   - jekyll-sitemap
   - jekyll-paginate
 
+# Giscus Comments
+giscus:
+  repo:             "gh0stkey/gh0stkey.github.io" # 格式: username/repo
+  repo_id:          "MDEwOlJlcG9zaXRvcnkzODc5NzEyMzU=" # 需要在 giscus.app 获取
+  category:         "Announcements" # 需要在 giscus.app 获取
+  category_id:      "DIC_kwDOFx_4o84CyCUA" # 需要在 giscus.app 获取
+  mapping:          "title"
+  strict:           "0"
+  reactions_enabled: "0"
+  emit_metadata:    "0"
+  input_position:   "top"
+  theme:            "light_protanopia"
+  lang:             "zh-CN"
+
 defaults:
   -
     scope:
