@@ -41,8 +41,19 @@ const toggleTheme = () => {
 
 const initTheme = () => {
   const savedTheme = localStorage.getItem('theme');
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  const theme = savedTheme || systemTheme;
+  let theme;
+
+  if (savedTheme) {
+    theme = savedTheme;
+  } else {
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 18) {
+      theme = 'light';
+    } else {
+      theme = 'dark';
+    }
+  }
+
   document.documentElement.setAttribute('data-theme', theme);
   updateIcons(theme);
 };

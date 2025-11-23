@@ -2,7 +2,15 @@
 <div id="giscus-container" class="giscus"></div>
 <script>
   (function() {
-    const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const getTheme = () => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        return savedTheme;
+      }
+      const hour = new Date().getHours();
+      return (hour >= 6 && hour < 18) ? 'light' : 'dark';
+    };
+    const theme = getTheme();
     const giscusTheme = theme === 'dark' ? '{{ site.giscus.dark_theme | default: "dark" }}' : '{{ site.giscus.light_theme | default: "light" }}';
     
     const script = document.createElement('script');
