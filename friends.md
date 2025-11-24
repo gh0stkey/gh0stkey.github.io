@@ -17,7 +17,7 @@ title: 友情链接
 
 [三米前有蕉皮](https://blog.kali-team.cn/)
 
-[悟空](http://hacktech.cn/) 
+[悟空](https://www.hacktech.cn/) 
 
 [YanZiShuang](https://www.whsgwl.net/index.html)
 
