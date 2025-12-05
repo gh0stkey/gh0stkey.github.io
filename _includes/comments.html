@@ -3,10 +3,20 @@
 <script>
   (function() {
     const getTheme = () => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        return savedTheme;
+      // 防御 Safari 无痕或禁用存储场景，避免抛错导致脚本中断
+      try {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+          return savedTheme;
+        }
+      } catch (e) {}
+
+      // 优先跟随系统深浅色
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
       }
+
+      // 时间兜底
       const hour = new Date().getHours();
       return (hour >= 6 && hour < 18) ? 'light' : 'dark';
     };
