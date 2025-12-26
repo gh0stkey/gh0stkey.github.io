@@ -1,14 +1,14 @@
 ---
 layout: post
 author: Vulkey_Chen
-title: "黑盒视角：探索 Webvie 组件漏洞面"
+title: "黑盒视角下的 WebView 漏洞面探索"
 date: 2025-12-26
 music-id: 2600493765
 permalink: /archives/2025-12-26/1
 description: "本文主要记录了在移动端探索 WebView 组件漏洞的过程，采用黑盒视角，摒弃复杂繁琐的内部逻辑分析，专注于快速且直接的漏洞挖掘方法。由于笔者才疏学浅，因此本文难免会出现一些文笔不通或专业解释不到位的情况，还望多包涵及斧正。"
 ---
 
-# 黑盒视角：探索 Webvie 组件漏洞面
+# 黑盒视角下的 WebView 漏洞面探索
 
 ## 前言
 
