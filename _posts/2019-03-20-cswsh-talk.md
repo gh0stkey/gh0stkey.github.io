@@ -3,7 +3,6 @@ layout: post
 author: Vulkey_Chen
 title: "浅谈WebSocket跨域劫持漏洞(CSWSH)"
 date: 2019-03-20
-music-id: 28661853
 permalink: /archives/2019-03-20/1
 description: "浅谈WebSocket跨域劫持漏洞(CSWSH)"
 ---

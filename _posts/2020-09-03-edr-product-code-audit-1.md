@@ -3,7 +3,6 @@ layout: post
 author: Vulkey_Chen
 title: "某终端检测响应平台代码审计挖掘（权限绕过）"
 date: 2020-09-03
-music-id: 
 permalink: /archives/2020-09-03/3
 description: "某终端检测响应平台代码审计挖掘（权限绕过）"
 ---

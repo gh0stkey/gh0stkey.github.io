@@ -3,7 +3,6 @@ layout: post
 author: Vulkey_Chen
 title: "基于BurpSuite快速探测越权-Authz插件"
 date: 2019-06-27
-music-id: 
 permalink: /archives/2019-06-27/1
 description: "基于BurpSuite快速探测越权-Authz插件"
 ---

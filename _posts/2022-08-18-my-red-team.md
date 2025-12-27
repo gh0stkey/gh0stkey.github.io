@@ -3,7 +3,6 @@ layout: post
 author: Vulkey_Chen
 title: "我眼中的红队"
 date: 2022-08-18
-music-id: 1413863166
 permalink: /archives/2022-08-18/1
 description: "我眼中的红队"
 ---

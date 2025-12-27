@@ -3,7 +3,6 @@ layout: post
 author: Vulkey_Chen
 title: "记一次攻防演习渗透过程"
 date: 2020-11-22
-music-id: 
 permalink: /archives/2020-11-22/1
 description: "记一次攻防演习渗透过程"
 ---

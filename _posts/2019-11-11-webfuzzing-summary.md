@@ -3,7 +3,6 @@ layout: post
 author: Vulkey_Chen
 title: "WebFuzzing方法和漏洞案例总结"
 date: 2019-11-11
-music-id: 1372323745
 permalink: /archives/2019-11-11/1
 description: "WebFuzzing方法和漏洞案例总结"
 ---

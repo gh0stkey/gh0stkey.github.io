@@ -3,7 +3,6 @@ layout: post
 author: Vulkey_Chen
 title: "文件寄生——NTFS文件流实际应用"
 date: 2017-03-29
-music-id: 
 permalink: /archives/2017-03-29/1
 description: "利用文件流可以给渗透测试带来很大的便利"
 ---

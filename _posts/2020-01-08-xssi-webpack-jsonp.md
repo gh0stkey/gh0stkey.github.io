@@ -3,7 +3,6 @@ layout: post
 author: Vulkey_Chen
 title: "[XSSI]动态JS劫持用户信息"
 date: 2020-01-08
-music-id: 
 permalink: /archives/2020-01-08/3
 description: "[XSSI]动态JS劫持用户信息"
 ---
