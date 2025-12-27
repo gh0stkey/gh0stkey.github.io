@@ -25,5 +25,31 @@ published: true
 
 		{% include footer.html %}
 
+		<script src="{{ "/assets/js/highlight/highlight.min.js" | prepend: site.baseurl }}"></script>
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		document.querySelectorAll('pre code[class*="language-"]').forEach(block => {
+			hljs.highlightElement(block);
+		});
+	});
+	const toggleHighlightTheme = () => {
+		const theme = document.documentElement.getAttribute('data-theme');
+		const lightCss = document.getElementById('highlight-light');
+		const darkCss = document.getElementById('highlight-dark');
+		if (theme === 'dark') {
+			lightCss.disabled = true;
+			darkCss.disabled = false;
+		} else {
+			lightCss.disabled = false;
+			darkCss.disabled = true;
+		}
+	};
+	document.addEventListener('DOMContentLoaded', toggleHighlightTheme);
+	const observer = new MutationObserver(toggleHighlightTheme);
+	observer.observe(document.documentElement, {
+		attributes: true,
+		attributeFilter: ['data-theme']
+	});
+	</script>
 	</body>
 </html>

@@ -14,8 +14,8 @@
   --logo-border: #fff;
   --logo-hover: #f14e32;
   --divider-color: #ccc;
-  --font-family: 'JetBrains Mono', 'Maple Mono', monospace;
-  --font-family-mono: 'JetBrains Mono', 'Maple Mono', monospace;
+  --font-family: 'JetBrains Mono', monospace;
+  --font-family-mono: 'JetBrains Mono', monospace;
 }
 
 [data-theme="dark"] {
@@ -230,7 +230,8 @@ pre {
   margin-bottom: 1rem;
   font-size: 0.8rem;
   line-height: 1.4;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   overflow-x: auto;
   background-color: var(--code-bg);
   border: 1px solid var(--border-color);
@@ -240,6 +241,12 @@ pre {
     font-size: 100%;
     color: inherit;
     background-color: transparent;
+    padding: 0;
+    display: block;
+    overflow-x: auto;
+  }
+  code.hljs {
+    background: transparent;
     padding: 0;
   }
 }

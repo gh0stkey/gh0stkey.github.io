@@ -1,40 +1,40 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1" /> <title>Wfuzz初上手 · Chen's Blog</title> <meta name="description" content="Wfuzz初上手"> <meta name="keywords" content="Wfuzz初上手"> <link rel="icon" href="http://localhost:4000/assets/favicon.png"> <link rel="apple-touch-icon" href="http://localhost:4000/assets/touch-icon.png"> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet"> <link rel="stylesheet" href="http://localhost:4000/assets/core.css"> <link rel="canonical" href="http://localhost:4000/archives/2018-10-28/1"> <link rel="alternate" type="application/atom+xml" title="Chen's Blog" href="http://localhost:4000/feed.xml" /> <link href="/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="all" /> <script> var _hmt = _hmt || []; (function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?e4a42a371cc5994ee02b940034c29658"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })(); </script> <script> window.giscusThemeConfig = { light: "light_protanopia", dark: "dark_tritanopia" }; </script> <script src="/assets/js/theme.js"></script> </head> <body> <button class="theme-toggle" id="themeToggle" aria-label="Switch Theme"> <!-- 太阳图标 (在深色模式显示) --> <svg id="icon-sun" viewBox="0 0 24 24"> <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" /> </svg> <!-- 月亮图标 (在亮色模式显示) --> <svg id="icon-moon" viewBox="0 0 24 24" style="display: none"> <path d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.16,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.06,6.83,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z" /> </svg> </button> <aside class="logo"> <a href="http://localhost:4000/"> <img src="/assets/avatar.jpg" class="logo-avatar"> </a> <span class="logo-prompt code">Back to Index</span> </aside> <article> <h1 class="title">EvilChen</h1> <div class="divider"></div> <center> <a href="https://github.com/gh0stkey" target="_blank">Github</a> | <a href="https://twitter.com/VulkeyChen" target="_blank">X (Twitter)</a> | <a href="/about" target="_blank">About</a> | <a href="/friends" target="_blank">Friends</a> </center> <div class="divider"></div> </article> <div id="content"> <article> <div class="center"> <h1 class="title">Wfuzz初上手</h1> <time class="code">October 28, 2018</time> </div> <div class="divider"></div> <h1 id="wfuzz初上手">Wfuzz初上手</h1> <p>Author: Vulkey_Chen</p> <p>Blog: gh0st.cn</p> <h2 id="wfuzz是啥玩意">Wfuzz是啥玩意？</h2> <p>wfuzz 是一款Python开发的Web安全模糊测试工具。https://github.com/xmendez/wfuzz</p> <p>简单粗暴的功能特点记录：</p> <ol> <li>模块化 框架 可编写插件</li> <li>接口 可处理BurpSuite所抓的请求和响应报文</li> </ol> <p>简而言之就是wfuzz可以用在做<strong>请求参数参数类的模糊测试</strong>，也可以用来做<strong>Web目录扫描</strong>等操作。</p> <h2 id="wfuzz初体验">Wfuzz初体验</h2> <ul> <li>安装Wfuzz <code class="language-plaintext highlighter-rouge">pip install wfuzz</code></li> </ul> <h3 id="简单的使用">简单的使用</h3> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-w</span> 字典 地址<span class="o">(</span>e.g. https://gh0st.cn/FUZZ<span class="o">)</span>
-</code></pre></div></div> <p>如上命令使用-w参数指定字典位置，然后跟上一个要测试的地址，所列的例子<code class="language-plaintext highlighter-rouge">https://gh0st.cn/FUZZ</code>中有一个<strong>FUZZ</strong>单词，这个单词可以理解是一个占位符，这样就大概了解了wfuzz的基本运行原理，它会读取字典然后传入占位符进行模糊测试请求。</p> <p>实际的使用一遍：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-w</span> test_dict.txt https://gh0st.cn/FUZZ
-</code></pre></div></div> <p>返回结果如下：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">********************************************************</span>
-<span class="k">*</span> Wfuzz 2.2.11 - The Web Fuzzer                        <span class="k">*</span>
-<span class="k">********************************************************</span>
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1" /> <title>Wfuzz初上手 · Chen's Blog</title> <meta name="description" content="Wfuzz初上手"> <meta name="keywords" content="Wfuzz初上手"> <link rel="icon" href="http://localhost:4000/assets/favicon.png"> <link rel="apple-touch-icon" href="http://localhost:4000/assets/touch-icon.png"> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet"> <link rel="stylesheet" href="/assets/css/highlight/github.min.css" id="highlight-light"> <link rel="stylesheet" href="/assets/css/highlight/github-dark.min.css" id="highlight-dark" disabled> <link rel="stylesheet" href="/assets/core.css"> <link rel="canonical" href="http://localhost:4000/archives/2018-10-28/1"> <link rel="alternate" type="application/atom+xml" title="Chen's Blog" href="http://localhost:4000/feed.xml" /> <link href="/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="all" /> <script> var _hmt = _hmt || []; (function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?e4a42a371cc5994ee02b940034c29658"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })(); </script> <script> window.giscusThemeConfig = { light: "light_protanopia", dark: "dark_tritanopia" }; </script> <script src="/assets/js/theme.js"></script> </head> <body> <button class="theme-toggle" id="themeToggle" aria-label="Switch Theme"> <!-- 太阳图标 (在深色模式显示) --> <svg id="icon-sun" viewBox="0 0 24 24"> <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" /> </svg> <!-- 月亮图标 (在亮色模式显示) --> <svg id="icon-moon" viewBox="0 0 24 24" style="display: none"> <path d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.16,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.06,6.83,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z" /> </svg> </button> <aside class="logo"> <a href="http://localhost:4000/"> <img src="/assets/avatar.jpg" class="logo-avatar"> </a> <span class="logo-prompt code">Back to Index</span> </aside> <article> <h1 class="title">EvilChen</h1> <div class="divider"></div> <center> <a href="/about" target="_blank">About Me</a> | <a href="/friends" target="_blank">My Friends</a> </center> <div class="divider"></div> </article> <div id="content"> <article> <div class="center"> <h1 class="title">Wfuzz初上手</h1> <time class="code">October 28, 2018</time> </div> <div class="divider"></div> <h1 id="wfuzz初上手">Wfuzz初上手</h1> <p>Author: Vulkey_Chen</p> <p>Blog: gh0st.cn</p> <h2 id="wfuzz是啥玩意">Wfuzz是啥玩意？</h2> <p>wfuzz 是一款Python开发的Web安全模糊测试工具。https://github.com/xmendez/wfuzz</p> <p>简单粗暴的功能特点记录：</p> <ol> <li>模块化 框架 可编写插件</li> <li>接口 可处理BurpSuite所抓的请求和响应报文</li> </ol> <p>简而言之就是wfuzz可以用在做<strong>请求参数参数类的模糊测试</strong>，也可以用来做<strong>Web目录扫描</strong>等操作。</p> <h2 id="wfuzz初体验">Wfuzz初体验</h2> <ul> <li>安装Wfuzz <code>pip install wfuzz</code></li> </ul> <h3 id="简单的使用">简单的使用</h3><pre><code class="language-shell">wfuzz -w 字典 地址(e.g. https://gh0st.cn/FUZZ)
+</code></pre><p>如上命令使用-w参数指定字典位置，然后跟上一个要测试的地址，所列的例子<code>https://gh0st.cn/FUZZ</code>中有一个<strong>FUZZ</strong>单词，这个单词可以理解是一个占位符，这样就大概了解了wfuzz的基本运行原理，它会读取字典然后传入占位符进行模糊测试请求。</p> <p>实际的使用一遍：</p><pre><code class="language-shell">wfuzz -w test_dict.txt https://gh0st.cn/FUZZ
+</code></pre><p>返回结果如下：</p><pre><code class="language-shell">********************************************************
+* Wfuzz 2.2.11 - The Web Fuzzer                        *
+********************************************************
 
 Target: https://gh0st.cn/FUZZ
 Total requests: 6
 
-<span class="o">==================================================================</span>
+==================================================================
 ID	Response   Lines      Word         Chars          Payload
-<span class="o">==================================================================</span>
+==================================================================
 
-000004:  <span class="nv">C</span><span class="o">=</span>404      1 L	     121 W	   1636 Ch	  <span class="s2">"test123"</span>
-000003:  <span class="nv">C</span><span class="o">=</span>404      1 L	     121 W	   1636 Ch	  <span class="s2">"456"</span>
-000006:  <span class="nv">C</span><span class="o">=</span>404      1 L	     121 W	   1636 Ch	  <span class="s2">"admin123"</span>
-000005:  <span class="nv">C</span><span class="o">=</span>404      1 L	     121 W	   1636 Ch	  <span class="s2">"admin"</span>
-000001:  <span class="nv">C</span><span class="o">=</span>404      1 L	     121 W	   1636 Ch	  <span class="s2">"abc"</span>
-000002:  <span class="nv">C</span><span class="o">=</span>404      1 L	     121 W	   1636 Ch	  <span class="s2">"123"</span>
+000004:  C=404      1 L	     121 W	   1636 Ch	  "test123"
+000003:  C=404      1 L	     121 W	   1636 Ch	  "456"
+000006:  C=404      1 L	     121 W	   1636 Ch	  "admin123"
+000005:  C=404      1 L	     121 W	   1636 Ch	  "admin"
+000001:  C=404      1 L	     121 W	   1636 Ch	  "abc"
+000002:  C=404      1 L	     121 W	   1636 Ch	  "123"
 
-Total <span class="nb">time</span>: 2.122055
+Total time: 2.122055
 Processed Requests: 6
 Filtered Requests: 0
 Requests/sec.: 2.827447
-</code></pre></div></div> <p>通过返回结果我们可以知道很多信息，最需要关注的就是<code class="language-plaintext highlighter-rouge">ID、Response、 Lines、Word、Chars、Payload</code>这一行，从左往右看，依次是<strong>编号、响应状态码、响应报文行数、响应报文字数、响应报文正字符数、测试使用的Payload</strong>。</p> <h3 id="了解wfuzz">了解Wfuzz</h3> <p>通过<code class="language-plaintext highlighter-rouge">-h</code>或者<code class="language-plaintext highlighter-rouge">--help</code>可以来获取帮助信息。</p> <h4 id="wfuzz模块">Wfuzz模块</h4> <p>如上所述说到wfuzz是模块化的框架，wfuzz默认自带很多模块，模块分为5种类型分别是：<code class="language-plaintext highlighter-rouge">payloads</code>、<code class="language-plaintext highlighter-rouge">encoders</code>、<code class="language-plaintext highlighter-rouge">iterators</code>、<code class="language-plaintext highlighter-rouge">printers</code>和<code class="language-plaintext highlighter-rouge">scripts</code>。</p> <p>通过<code class="language-plaintext highlighter-rouge">-e</code>参数可以查看指定模块类型中的模块列表：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-e</span> payloads
-</code></pre></div></div> <p><code class="language-plaintext highlighter-rouge">payloads</code>类的模块列表如下：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Available payloads:
+</code></pre><p>通过返回结果我们可以知道很多信息，最需要关注的就是<code>ID、Response、 Lines、Word、Chars、Payload</code>这一行，从左往右看，依次是<strong>编号、响应状态码、响应报文行数、响应报文字数、响应报文正字符数、测试使用的Payload</strong>。</p> <h3 id="了解wfuzz">了解Wfuzz</h3> <p>通过<code>-h</code>或者<code>--help</code>可以来获取帮助信息。</p> <h4 id="wfuzz模块">Wfuzz模块</h4> <p>如上所述说到wfuzz是模块化的框架，wfuzz默认自带很多模块，模块分为5种类型分别是：<code>payloads</code>、<code>encoders</code>、<code>iterators</code>、<code>printers</code>和<code>scripts</code>。</p> <p>通过<code>-e</code>参数可以查看指定模块类型中的模块列表：</p><pre><code class="language-shell">wfuzz -e payloads
+</code></pre><p><code>payloads</code>类的模块列表如下：</p><pre><code class="language-shell">Available payloads:
 
   Name            | Summary
-<span class="nt">------------------------------------------------------------------------------------------------------</span>
-  guitab          | This payload reads requests from a tab <span class="k">in </span>the GUI
-  dirwalk         | Returns filename<span class="s1">'s recursively from a local directory.
+------------------------------------------------------------------------------------------------------
+  guitab          | This payload reads requests from a tab in the GUI
+  dirwalk         | Returns filename's recursively from a local directory.
   file            | Returns each word from a file.
   burpstate       | Returns fuzz results from a Burp state.
-  wfuzzp          | Returns fuzz results'</span> URL from a previous stored wfuzz session.
+  wfuzzp          | Returns fuzz results' URL from a previous stored wfuzz session.
   ipnet           | Returns list of IP addresses of a network.
-  bing            | Returns URL results of a given bing API search <span class="o">(</span>needs api key<span class="o">)</span><span class="nb">.</span>
-  stdin           | Returns each item <span class="nb">read </span>from stdin.
+  bing            | Returns URL results of a given bing API search (needs api key).
+  stdin           | Returns each item read from stdin.
   list            | Returns each element of the given word list separated by -.
   hexrand         | Returns random hex numbers from the given range.
   range           | Returns each number of the given range.
@@ -42,38 +42,38 @@ Requests/sec.: 2.827447
                   | n typical constructions.
   hexrange        | Returns each hex number of the given hex range.
   permutation     | Returns permutations of the given charset and length.
-  buffer_overflow | Returns a string using the following pattern A <span class="k">*</span> given number.
+  buffer_overflow | Returns a string using the following pattern A * given number.
   iprange         | Returns list of IP addresses of a given IP range.
   burplog         | Returns fuzz results from a Burp log.
-  autorize        | Returns fuzz results<span class="s1">' from autororize.
-</span></code></pre></div></div> <h3 id="wfuzz使用">Wfuzz使用</h3> <p>从上文知道了wfuzz基于一个非常简单的概念：使用payload来替换相应的FUZZ关键词的位置，FUZZ这样的关键词就是<code class="language-plaintext highlighter-rouge">占位符</code>，payload就是输入源。</p> <p>通过<code class="language-plaintext highlighter-rouge">wfuzz -e payloads</code>可以获取payloads类的所有模块列表，使用<code class="language-plaintext highlighter-rouge">wfuzz -z help</code>可以获取关于payloads类模块的详细信息，也可以通过<code class="language-plaintext highlighter-rouge">--slice</code>参数来过滤返回信息的结果。</p> <p>e.g. <code class="language-plaintext highlighter-rouge">wfuzz -z help --slice "names"</code></p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Name: names 0.1
+  autorize        | Returns fuzz results' from autororize.
+</code></pre><h3 id="wfuzz使用">Wfuzz使用</h3> <p>从上文知道了wfuzz基于一个非常简单的概念：使用payload来替换相应的FUZZ关键词的位置，FUZZ这样的关键词就是<code>占位符</code>，payload就是输入源。</p> <p>通过<code>wfuzz -e payloads</code>可以获取payloads类的所有模块列表，使用<code>wfuzz -z help</code>可以获取关于payloads类模块的详细信息，也可以通过<code>--slice</code>参数来过滤返回信息的结果。</p> <p>e.g. <code>wfuzz -z help --slice "names"</code></p><pre><code class="language-shell">Name: names 0.1
 Categories: default
 Summary: Returns possible usernames by mixing the given words, separated by -, using known typical constructions.
-Author: Christian Martorella,Adapted to newer versions Xavi Mendez <span class="o">(</span>@xmendez<span class="o">)</span>
+Author: Christian Martorella,Adapted to newer versions Xavi Mendez (@xmendez)
 Description:
    ie. jon-smith
 Parameters:
-   + name: Name and surname <span class="k">in </span>the form of name-surname.
-</code></pre></div></div> <h4 id="使用字典">使用（字典）</h4> <p>注：命令中的wordlist表示为字典位置</p> <ol> <li> <p><code class="language-plaintext highlighter-rouge">wfuzz -z file --zP fn=wordlist URL/FUZZ</code></p> </li> <li> <p><code class="language-plaintext highlighter-rouge">wfuzz -z file,wordlist URL/FUZZ</code></p> </li> <li> <p><code class="language-plaintext highlighter-rouge">wfuzz -w wordlist URL/FUZZ</code></p> </li> </ol> <p>这里有必要说明下，使用命令意义是一样的，都是使用<code class="language-plaintext highlighter-rouge">payloads</code>模块类中的<code class="language-plaintext highlighter-rouge">file</code>模块，通过<code class="language-plaintext highlighter-rouge">wfuzz -z help --slice "file"</code>看如何使用<code class="language-plaintext highlighter-rouge">file</code>模块：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Name: file 0.1
+   + name: Name and surname in the form of name-surname.
+</code></pre><h4 id="使用字典">使用（字典）</h4> <p>注：命令中的wordlist表示为字典位置</p> <ol> <li> <p><code>wfuzz -z file --zP fn=wordlist URL/FUZZ</code></p> </li> <li> <p><code>wfuzz -z file,wordlist URL/FUZZ</code></p> </li> <li> <p><code>wfuzz -w wordlist URL/FUZZ</code></p> </li> </ol> <p>这里有必要说明下，使用命令意义是一样的，都是使用<code>payloads</code>模块类中的<code>file</code>模块，通过<code>wfuzz -z help --slice "file"</code>看如何使用<code>file</code>模块：</p><pre><code class="language-shell">Name: file 0.1
 Categories: default
 Summary: Returns each word from a file.
-Author: Carlos del Ojo,Christian Martorella,Adapted to newer versions Xavi Mendez <span class="o">(</span>@xmendez<span class="o">)</span>
+Author: Carlos del Ojo,Christian Martorella,Adapted to newer versions Xavi Mendez (@xmendez)
 Description:
    Returns the contents of a dictionary file line by line.
 Parameters:
    + fn: Filename of a valid dictionary
-</code></pre></div></div> <p>通过返回的帮助信息，我们知道这个模块需要一个<strong>参数fn</strong>，这个参数值为字典文件名（绝对路径）。这样子第一条命令一下子就明白了，<code class="language-plaintext highlighter-rouge">wfuzz -z file --zP fn=wordlist URL/FUZZ</code>中的<code class="language-plaintext highlighter-rouge">-z file</code>使用模块，<code class="language-plaintext highlighter-rouge">--zP fn=wordlist</code>是定义<strong>fn参数</strong>的值（可以这样理解，–zP 这里的P大写代表 Parameters ，然后其他的都是固有个事）</p> <p>第二条命令简写了第一条命令的赋值，第三条命令使用<code class="language-plaintext highlighter-rouge">-w</code>，这个参数就是<code class="language-plaintext highlighter-rouge">-z file --zP fn</code>的别名。</p> <p><strong>多个字典</strong></p> <p>使用<code class="language-plaintext highlighter-rouge">-z</code> 或<code class="language-plaintext highlighter-rouge">-w</code> 参数可以同时指定多个字典，这时相应的占位符应设置为 <strong>FUZZ,FUZ2Z,FUZ3Z,….,FUZnZ</strong>, 其中<code class="language-plaintext highlighter-rouge">n</code>代表了占位序号。</p> <p>例如想要同时爆破目录、文件名、后缀，可以这样来玩：</p> <p><code class="language-plaintext highlighter-rouge">wfuzz -w 目录字典路径 -w 文件名字典路径 -w 后缀名字典路径 URL/FUZZ/FUZ2Z.FUZ3Z</code></p> <h4 id="过滤器">过滤器</h4> <p>wfuzz具有过滤器功能，在做测试的过程中会因为环境的问题需要进行过滤，例如在做目录扫描的时候，你事先探测并知道了这个网站访问不存在目录的时候使用的是自定义404页面（也就是状态码为200），而你可以选择提取该自定义页面的特征来过滤这些返回结果。</p> <p>wfuzz过滤分为两种方法：<strong>隐藏符合过滤条件的结果</strong> 和 <strong>显示符合过滤条件的结果</strong></p> <p><strong>隐藏响应结果</strong></p> <p>通过<code class="language-plaintext highlighter-rouge">--hc</code>，<code class="language-plaintext highlighter-rouge">--hl</code>，<code class="language-plaintext highlighter-rouge">--hw</code>，<code class="language-plaintext highlighter-rouge">--hh</code>参数可以隐藏某些HTTP响应。</p> <ul> <li><code class="language-plaintext highlighter-rouge">--hc</code> 根据响应报文状态码进行隐藏（hide code）</li> </ul> <p>隐藏404：</p> <p><code class="language-plaintext highlighter-rouge">wfuzz -w wordlist --hc 404 URL/FUZZ</code></p> <p>隐藏404、403：</p> <p><code class="language-plaintext highlighter-rouge">wfuzz -w wordlist --hc 404,403 URL/FUZZ</code></p> <p>e.g. 使用百度举个例子，运行<code class="language-plaintext highlighter-rouge">wfuzz -w test_dict.txt https://www.baidu.com/FUZZ</code>结果如下</p> <p><img src="/images/2018-10-28/0x00.png" alt="0x00" /></p> <p>这里所有的测试请求，都是不存在的页面，那么百度的404页面规则就是如上图结果所示：<strong>响应报文状态码（302）、响应报文行数（7）、响应报文字数（18）、响应报文字符数（222）</strong>，那么下面的就是填空题了～</p> <ul> <li><code class="language-plaintext highlighter-rouge">--hl</code>根据响应报文行数进行隐藏（hide lines）</li> </ul> <p><code class="language-plaintext highlighter-rouge">wfuzz -w wordlist --hl 7 https://www.baidu.com/FUZZ</code></p> <ul> <li><code class="language-plaintext highlighter-rouge">--hw</code>根据响应报文字数进行隐藏（hide word）</li> </ul> <p><code class="language-plaintext highlighter-rouge">wfuzz -w wordlist --hw 18 https://www.baidu.com/FUZZ</code></p> <ul> <li><code class="language-plaintext highlighter-rouge">--hh</code>根据响应报文字符数进行隐藏（hide chars 这里因为code和chars首字母都是c，–hc参数已经有了，所以hide chars的参数就变成了–hh）</li> </ul> <p><code class="language-plaintext highlighter-rouge">wfuzz -w wordlist --hh 222 https://www.baidu.com/FUZZ</code></p> <p>如果根据单个条件判断相对来说肯定是不精确的，所以整合一下就是这样的命令：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-w</span> wordlist <span class="nt">--hc</span> 302 <span class="nt">--hl</span> 7 <span class="nt">--hw</span> 18 <span class="nt">--hh</span> 222 https://www.baidu.com/FUZZ
-</code></pre></div></div> <p>这样就可以对<code class="language-plaintext highlighter-rouge">https://www.baidu.com/</code>进行目录扫描咯～</p> <p><strong>显示响应结果</strong></p> <p>显示响应结果的使用方法跟隐藏时的原理一样，只不过参数变为了：<code class="language-plaintext highlighter-rouge">--sc</code>（show code），<code class="language-plaintext highlighter-rouge">--sl</code>（show lines），<code class="language-plaintext highlighter-rouge">--sw</code>（show word），<code class="language-plaintext highlighter-rouge">--sh</code> （show chars）。</p> <p><strong>使用Baseline(基准线)</strong></p> <p>过滤器可以是某个HTTP响应的引用，这样的引用我们称为Baseline。</p> <p>之前的使用<code class="language-plaintext highlighter-rouge">--hh</code>进行过滤的例子中，还可以使用下面的命令代替：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-w</span> wordlist <span class="nt">--hh</span> BBB https://www.baidu.com/FUZZ<span class="o">{</span>404there<span class="o">}</span>
-</code></pre></div></div> <p><img src="/images/2018-10-28/0x01.png" alt="0x01" /></p> <p>这条命令的意思应该很容易理解，首先要清楚基准线是什么？换个名字：标准线 or 及格线。</p> <p>首先解释下<code class="language-plaintext highlighter-rouge">https://www.baidu.com/FUZZ{404there}</code>的意思，这里代表wfuzz第一个请求是请求<code class="language-plaintext highlighter-rouge">https://www.baidu.com/404there</code>这个网址，在<code class="language-plaintext highlighter-rouge">{ }</code>内的值用来指定wfuzz第一个请求中的FUZZ占位符，而这第一个请求被标记为BBB（<strong>BBB不能换成别的</strong>）基准线；其次这里使用的参数是<code class="language-plaintext highlighter-rouge">--hh</code>，<strong>也就是以BBB这条请求中的Chars为基准，其他请求的Chars值与BBB相同则隐藏</strong>。</p> <p><strong>使用正则表达式过滤</strong></p> <p>wfuzz参数<code class="language-plaintext highlighter-rouge">--ss</code>和<code class="language-plaintext highlighter-rouge">--hs</code>可以使用正则表达式来对返回的结果过滤。</p> <p>e.g. 在这里一个网站自定义返回页面的内容中包含<code class="language-plaintext highlighter-rouge">Not Found</code>，想根据这个内容进行过滤可以使用如下的命令：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-w</span> wordlist <span class="nt">--hs</span> <span class="s2">"Not Found"</span> http://127.0.0.1/FUZZ
-</code></pre></div></div> <p><img src="/images/2018-10-28/0x02.png" alt="0x02" /></p> <p>得出结论使用方法：</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz -w wordlist --hs 正则表达式 URL/FUZZ #隐藏
+</code></pre><p>通过返回的帮助信息，我们知道这个模块需要一个<strong>参数fn</strong>，这个参数值为字典文件名（绝对路径）。这样子第一条命令一下子就明白了，<code>wfuzz -z file --zP fn=wordlist URL/FUZZ</code>中的<code>-z file</code>使用模块，<code>--zP fn=wordlist</code>是定义<strong>fn参数</strong>的值（可以这样理解，–zP 这里的P大写代表 Parameters ，然后其他的都是固有个事）</p> <p>第二条命令简写了第一条命令的赋值，第三条命令使用<code>-w</code>，这个参数就是<code>-z file --zP fn</code>的别名。</p> <p><strong>多个字典</strong></p> <p>使用<code>-z</code> 或<code>-w</code> 参数可以同时指定多个字典，这时相应的占位符应设置为 <strong>FUZZ,FUZ2Z,FUZ3Z,….,FUZnZ</strong>, 其中<code>n</code>代表了占位序号。</p> <p>例如想要同时爆破目录、文件名、后缀，可以这样来玩：</p> <p><code>wfuzz -w 目录字典路径 -w 文件名字典路径 -w 后缀名字典路径 URL/FUZZ/FUZ2Z.FUZ3Z</code></p> <h4 id="过滤器">过滤器</h4> <p>wfuzz具有过滤器功能，在做测试的过程中会因为环境的问题需要进行过滤，例如在做目录扫描的时候，你事先探测并知道了这个网站访问不存在目录的时候使用的是自定义404页面（也就是状态码为200），而你可以选择提取该自定义页面的特征来过滤这些返回结果。</p> <p>wfuzz过滤分为两种方法：<strong>隐藏符合过滤条件的结果</strong> 和 <strong>显示符合过滤条件的结果</strong></p> <p><strong>隐藏响应结果</strong></p> <p>通过<code>--hc</code>，<code>--hl</code>，<code>--hw</code>，<code>--hh</code>参数可以隐藏某些HTTP响应。</p> <ul> <li><code>--hc</code> 根据响应报文状态码进行隐藏（hide code）</li> </ul> <p>隐藏404：</p> <p><code>wfuzz -w wordlist --hc 404 URL/FUZZ</code></p> <p>隐藏404、403：</p> <p><code>wfuzz -w wordlist --hc 404,403 URL/FUZZ</code></p> <p>e.g. 使用百度举个例子，运行<code>wfuzz -w test_dict.txt https://www.baidu.com/FUZZ</code>结果如下</p> <p><img src="/images/2018-10-28/0x00.png" alt="0x00" /></p> <p>这里所有的测试请求，都是不存在的页面，那么百度的404页面规则就是如上图结果所示：<strong>响应报文状态码（302）、响应报文行数（7）、响应报文字数（18）、响应报文字符数（222）</strong>，那么下面的就是填空题了～</p> <ul> <li><code>--hl</code>根据响应报文行数进行隐藏（hide lines）</li> </ul> <p><code>wfuzz -w wordlist --hl 7 https://www.baidu.com/FUZZ</code></p> <ul> <li><code>--hw</code>根据响应报文字数进行隐藏（hide word）</li> </ul> <p><code>wfuzz -w wordlist --hw 18 https://www.baidu.com/FUZZ</code></p> <ul> <li><code>--hh</code>根据响应报文字符数进行隐藏（hide chars 这里因为code和chars首字母都是c，–hc参数已经有了，所以hide chars的参数就变成了–hh）</li> </ul> <p><code>wfuzz -w wordlist --hh 222 https://www.baidu.com/FUZZ</code></p> <p>如果根据单个条件判断相对来说肯定是不精确的，所以整合一下就是这样的命令：</p><pre><code class="language-shell">wfuzz -w wordlist --hc 302 --hl 7 --hw 18 --hh 222 https://www.baidu.com/FUZZ
+</code></pre><p>这样就可以对<code>https://www.baidu.com/</code>进行目录扫描咯～</p> <p><strong>显示响应结果</strong></p> <p>显示响应结果的使用方法跟隐藏时的原理一样，只不过参数变为了：<code>--sc</code>（show code），<code>--sl</code>（show lines），<code>--sw</code>（show word），<code>--sh</code> （show chars）。</p> <p><strong>使用Baseline(基准线)</strong></p> <p>过滤器可以是某个HTTP响应的引用，这样的引用我们称为Baseline。</p> <p>之前的使用<code>--hh</code>进行过滤的例子中，还可以使用下面的命令代替：</p><pre><code class="language-shell">wfuzz -w wordlist --hh BBB https://www.baidu.com/FUZZ{404there}
+</code></pre><p><img src="/images/2018-10-28/0x01.png" alt="0x01" /></p> <p>这条命令的意思应该很容易理解，首先要清楚基准线是什么？换个名字：标准线 or 及格线。</p> <p>首先解释下<code>https://www.baidu.com/FUZZ{404there}</code>的意思，这里代表wfuzz第一个请求是请求<code>https://www.baidu.com/404there</code>这个网址，在<code>{ }</code>内的值用来指定wfuzz第一个请求中的FUZZ占位符，而这第一个请求被标记为BBB（<strong>BBB不能换成别的</strong>）基准线；其次这里使用的参数是<code>--hh</code>，<strong>也就是以BBB这条请求中的Chars为基准，其他请求的Chars值与BBB相同则隐藏</strong>。</p> <p><strong>使用正则表达式过滤</strong></p> <p>wfuzz参数<code>--ss</code>和<code>--hs</code>可以使用正则表达式来对返回的结果过滤。</p> <p>e.g. 在这里一个网站自定义返回页面的内容中包含<code>Not Found</code>，想根据这个内容进行过滤可以使用如下的命令：</p><pre><code class="language-shell">wfuzz -w wordlist --hs "Not Found" http://127.0.0.1/FUZZ
+</code></pre><p><img src="/images/2018-10-28/0x02.png" alt="0x02" /></p> <p>得出结论使用方法：</p><pre><code>wfuzz -w wordlist --hs 正则表达式 URL/FUZZ #隐藏
 wfuzz -w wordlist --ss 正则表达式 URL/FUZZ #显示
-</code></pre></div></div> <h2 id="手册">手册</h2> <p>原文来自：DigApis安全 m0nst3r</p> <h3 id="模块种类">模块种类</h3> <h4 id="payload">payload</h4> <p>payload为wfuzz生成的用于测试的特定字符串，一般情况下，会替代被测试URL中的FUZZ占位符。 当前版本中的wfuzz中可用payloads列表如下：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Available payloads:
+</code></pre><h2 id="手册">手册</h2> <p>原文来自：DigApis安全 m0nst3r</p> <h3 id="模块种类">模块种类</h3> <h4 id="payload">payload</h4> <p>payload为wfuzz生成的用于测试的特定字符串，一般情况下，会替代被测试URL中的FUZZ占位符。 当前版本中的wfuzz中可用payloads列表如下：</p><pre><code class="language-shell">Available payloads:
   Name            | Summary                                                                           
-<span class="nt">------------------------------------------------------------------------------------------------------</span>
+------------------------------------------------------------------------------------------------------
   guitab          | 从可视化的标签栏中读取请求                                
   dirwalk         | 递归获得本地某个文件夹中的文件名                            
   file            | 获取一个文件当中的每个词                                                    
-  autorize        | 获取autorize的测试结果Returns fuzz results<span class="s1">' from autororize.                                            
+  autorize        | 获取autorize的测试结果Returns fuzz results' from autororize.                                            
   wfuzzp          | 从之前保存的wfuzz会话中获取测试结果的URL                   
   ipnet           | 获得一个指定网络的IP地址列表                                        
   bing            | 获得一个使用bing API搜索的URL列表 (需要 api key).                   
@@ -88,56 +88,56 @@ wfuzz -w wordlist --ss 正则表达式 URL/FUZZ #显示
   hexrange        | 获得指定范围内的每一个hex值                                   
   iprange         | 获得指定IP范围内的IP地址列表                                 
   burpstate       | 从BurpSuite的状态下获得测试结果
-</span></code></pre></div></div> <h4 id="encoder">encoder</h4> <p>encoder的作用是将payload进行编码或加密。 wfuzz的encoder列表如下：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Available encoders:
+</code></pre><h4 id="encoder">encoder</h4> <p>encoder的作用是将payload进行编码或加密。 wfuzz的encoder列表如下：</p><pre><code class="language-shell">Available encoders:
   Category      | Name                      | Summary                                                                           
-<span class="nt">------------------------------------------------------------------------------------------------------------------------</span>
-  url_safe, url | urlencode                 | 用<span class="sb">`</span>%xx<span class="sb">`</span>的方式替换特殊字符， 字母/数字/下划线/半角点/减号不替换
-  url_safe, url | double urlencode             | 用<span class="sb">`</span>%25xx<span class="sb">`</span>的方式替换特殊字符， 字母/数字/下划线/半角点/减号不替换
-  url              | uri_double_hex            | 用<span class="sb">`</span>%25xx<span class="sb">`</span>的方式将所有字符进行编码
-  html          | html_escape                | 将<span class="sb">`</span>&amp;<span class="sb">`</span>，<span class="sb">`</span>&lt;<span class="sb">`</span>，<span class="sb">`</span><span class="o">&gt;</span><span class="sb">`</span>转换为HTML安全的字符
-  html            | html_hexadecimal             | 用 <span class="sb">`</span>&amp;#xx<span class="p">;</span><span class="sb">`</span> 的方式替换所有字符
-  hashes         | <span class="nb">base64</span>                    | 将给定的字符串中的所有字符进行base64编码
-  url             | doble_nibble_hex             | 将所有字符以<span class="sb">`</span>%%dd%dd<span class="sb">`</span>格式进行编码
-  db             | mssql_char                | 将所有字符转换为MsSQL语法的<span class="sb">`</span>char<span class="o">(</span>xx<span class="o">)</span><span class="sb">`</span>形式
-  url             | utf8                        | 将所有字符以<span class="sb">`</span><span class="se">\u</span>00xx<span class="sb">`</span> 格式进行编码
+------------------------------------------------------------------------------------------------------------------------
+  url_safe, url | urlencode                 | 用`%xx`的方式替换特殊字符， 字母/数字/下划线/半角点/减号不替换
+  url_safe, url | double urlencode             | 用`%25xx`的方式替换特殊字符， 字母/数字/下划线/半角点/减号不替换
+  url              | uri_double_hex            | 用`%25xx`的方式将所有字符进行编码
+  html          | html_escape                | 将`&amp;`，`&lt;`，`&gt;`转换为HTML安全的字符
+  html            | html_hexadecimal             | 用 `&amp;#xx;` 的方式替换所有字符
+  hashes         | base64                    | 将给定的字符串中的所有字符进行base64编码
+  url             | doble_nibble_hex             | 将所有字符以`%%dd%dd`格式进行编码
+  db             | mssql_char                | 将所有字符转换为MsSQL语法的`char(xx)`形式
+  url             | utf8                        | 将所有字符以`\u00xx` 格式进行编码
   hashes         | md5                         | 将给定的字符串进行md5加密
   default         | random_upper                | 将字符串中随机字符变为大写
-  url             | first_nibble_hex          | 将所有字符以<span class="sb">`</span>%%dd?<span class="sb">`</span> 格式进行编码
+  url             | first_nibble_hex          | 将所有字符以`%%dd?` 格式进行编码
   default         | hexlify                    | 每个数据的单个比特转换为两个比特表示的hex表示
-  url             | second_nibble_hex         | 将所有字符以<span class="sb">`</span>%?%dd<span class="sb">`</span> 格式进行编码
-  url             | uri_hex                     | 将所有字符以<span class="sb">`</span>%xx<span class="sb">`</span> 格式进行编码
+  url             | second_nibble_hex         | 将所有字符以`%?%dd` 格式进行编码
+  url             | uri_hex                     | 将所有字符以`%xx` 格式进行编码
   default         | none                         | 不进行任何编码
   hashes         | sha1                        | 将字符串进行sha1加密
-  url             | utf8_binary                | 将字符串中的所有字符以 <span class="sb">`</span><span class="se">\u</span>xx<span class="sb">`</span> 形式进行编码
-  url             | uri_triple_hex             | 将所有字符以<span class="sb">`</span>%25%xx%xx<span class="sb">`</span> 格式进行编码
-  url             | uri_unicode                | 将所有字符以<span class="sb">`</span>%u00xx<span class="sb">`</span> 格式进行编码
-  html             | html_decimal                | 将所有字符以 <span class="sb">`</span>&amp;#dd<span class="p">;</span> <span class="sb">`</span> 格式进行编码
-  db             | oracle_char                | 将所有字符转换为Oracle语法的<span class="sb">`</span>chr<span class="o">(</span>xx<span class="o">)</span><span class="sb">`</span>形式
-  db             | mysql_char                 | 将所有字符转换为MySQL语法的<span class="sb">`</span>char<span class="o">(</span>xx<span class="o">)</span><span class="sb">`</span>形式
-</code></pre></div></div> <h4 id="iterator">iterator</h4> <p>wfuzz的iterator提供了针对多个payload的处理方式。 itorators的列表如下：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Available iterators:
+  url             | utf8_binary                | 将字符串中的所有字符以 `\uxx` 形式进行编码
+  url             | uri_triple_hex             | 将所有字符以`%25%xx%xx` 格式进行编码
+  url             | uri_unicode                | 将所有字符以`%u00xx` 格式进行编码
+  html             | html_decimal                | 将所有字符以 `&amp;#dd; ` 格式进行编码
+  db             | oracle_char                | 将所有字符转换为Oracle语法的`chr(xx)`形式
+  db             | mysql_char                 | 将所有字符转换为MySQL语法的`char(xx)`形式
+</code></pre><h4 id="iterator">iterator</h4> <p>wfuzz的iterator提供了针对多个payload的处理方式。 itorators的列表如下：</p><pre><code class="language-shell">Available iterators:
 
   Name    | Summary
-<span class="nt">----------------------------------------------------------------------------------------------</span>
+----------------------------------------------------------------------------------------------
   product | Returns an iterator cartesian product of input iterables.
   zip     | Returns an iterator that aggregates elements from each of the iterables.
-  chain   | Returns an iterator returns elements from the first iterable <span class="k">until </span>it is exhaust
-          | ed, <span class="k">then </span>proceeds to the next iterable, <span class="k">until </span>all of the iterables are exhausted
-          | <span class="nb">.</span>
-</code></pre></div></div> <h4 id="printer">printer</h4> <p>wfuzz的printers用于控制输出打印。 printers列表如下：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Available printers:
+  chain   | Returns an iterator returns elements from the first iterable until it is exhaust
+          | ed, then proceeds to the next iterable, until all of the iterables are exhausted
+          | .
+</code></pre><h4 id="printer">printer</h4> <p>wfuzz的printers用于控制输出打印。 printers列表如下：</p><pre><code class="language-shell">Available printers:
   Name      | Summary                             
-<span class="nt">--------------------------------------------------</span>
-  raw       | <span class="sb">`</span>Raw<span class="sb">`</span> output format
-  json      | Results <span class="k">in</span> <span class="sb">`</span>json<span class="sb">`</span> format
-  csv       | <span class="sb">`</span>CSV<span class="sb">`</span> printer ftw
-  magictree | Prints results <span class="k">in</span> <span class="sb">`</span>magictree<span class="sb">`</span> format
-  html      | Prints results <span class="k">in</span> <span class="sb">`</span>html<span class="sb">`</span> format
-</code></pre></div></div> <h4 id="scripts">scripts</h4> <p>scripts列表如下：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Available scripts:
+--------------------------------------------------
+  raw       | `Raw` output format
+  json      | Results in `json` format
+  csv       | `CSV` printer ftw
+  magictree | Prints results in `magictree` format
+  html      | Prints results in `html` format
+</code></pre><h4 id="scripts">scripts</h4> <p>scripts列表如下：</p><pre><code class="language-shell">Available scripts:
   Category                   | Name          | Summary
-<span class="nt">----------------------------------------------------------------------------------------------------</span>
+----------------------------------------------------------------------------------------------------
   default, passive           | cookies       | 查找新的cookies
   default, passive           | errors        | 查找错误信息
-  passive                    | <span class="nb">grep</span>          | HTTP response <span class="nb">grep
-  </span>active                     | screenshot    | 用linux cutycapt tool 进行屏幕抓取 
+  passive                    | grep          | HTTP response grep
+  active                     | screenshot    | 用linux cutycapt tool 进行屏幕抓取 
   default, active, discovery | links         | 解析HTML并查找新的内容
   default, active, discovery | wc_extractor  | 解析subversion的wc.db文件
   default, passive           | listing       | 查找列目录漏洞
@@ -148,12 +148,12 @@ wfuzz -w wordlist --ss 正则表达式 URL/FUZZ #显示
   default, active, discovery | svn_extractor | 解析 .svn/entries 文件
   active, discovery          | backups       | 查找已知的备份文件名
   default, active, discovery | sitemap       | 解析 sitemap.xml 文件
-</code></pre></div></div> <h3 id="内置工具">内置工具</h3> <h4 id="wfencode-工具">wfencode 工具</h4> <p>这是wfuzz自带的一个加密/解密（编码/反编码）工具，目前支持内建的encoders的加/解密。</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfencode <span class="nt">-e</span> <span class="nb">base64 </span>123456
-<span class="o">[</span>RES] MTIzNDU2
-wfencode <span class="nt">-d</span> <span class="nb">base64 </span>MTIzNDU2
-<span class="o">[</span>RES] 123456
-</code></pre></div></div> <hr /> <h4 id="wfpayload工具">wfpayload工具</h4> <p>wfpayload是payload生成工具</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfpayload <span class="nt">-z</span> range,0-10
-<span class="o">[</span>RES]
+</code></pre><h3 id="内置工具">内置工具</h3> <h4 id="wfencode-工具">wfencode 工具</h4> <p>这是wfuzz自带的一个加密/解密（编码/反编码）工具，目前支持内建的encoders的加/解密。</p><pre><code class="language-shell">wfencode -e base64 123456
+[RES] MTIzNDU2
+wfencode -d base64 MTIzNDU2
+[RES] 123456
+</code></pre><hr /> <h4 id="wfpayload工具">wfpayload工具</h4> <p>wfpayload是payload生成工具</p><pre><code class="language-shell">wfpayload -z range,0-10
+[RES]
 0
 1
 2
@@ -165,55 +165,55 @@ wfencode <span class="nt">-d</span> <span class="nb">base64 </span>MTIzNDU2
 8
 9
 10
-</code></pre></div></div> <h4 id="wxfuzz-工具">wxfuzz 工具</h4> <p>这个看源码是一个wxPython化的wfuzz，也就是GUI图形界面的wfuzz。目前需要wxPython最新版本才能使用，但是在ParrotOS和Kali上都无法正常安装成功，问题已在GitHub提交Issue，期待开发者的回复中…</p> <h3 id="wfuzz命令中文帮助">wfuzz命令中文帮助</h3> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Usage:    wfuzz <span class="o">[</span>options] <span class="nt">-z</span> payload,params &lt;url&gt;
+</code></pre><h4 id="wxfuzz-工具">wxfuzz 工具</h4> <p>这个看源码是一个wxPython化的wfuzz，也就是GUI图形界面的wfuzz。目前需要wxPython最新版本才能使用，但是在ParrotOS和Kali上都无法正常安装成功，问题已在GitHub提交Issue，期待开发者的回复中…</p> <h3 id="wfuzz命令中文帮助">wfuzz命令中文帮助</h3><pre><code class="language-shell">Usage:    wfuzz [options] -z payload,params &lt;url&gt;
     FUZZ, ..., FUZnZ              payload占位符，wfuzz会用指定的payload代替相应的占位符，n代表数字. 
-    FUZZ<span class="o">{</span>baseline_value<span class="o">}</span>     FUZZ 会被 baseline_value替换，并将此作为测试过程中第一个请求来测试，可用来作为过滤的一个基础。
+    FUZZ{baseline_value}     FUZZ 会被 baseline_value替换，并将此作为测试过程中第一个请求来测试，可用来作为过滤的一个基础。
 Options:
-    <span class="nt">-h</span>/--help            : 帮助文档
-    <span class="nt">--help</span>                : 高级帮助文档
-    <span class="nt">--version</span>            : Wfuzz详细版本信息
-    <span class="nt">-e</span> &lt;<span class="nb">type</span><span class="o">&gt;</span>            :  显示可用的encoders/payloads/iterators/printers/scripts列表
-    <span class="nt">--recipe</span> &lt;filename&gt;        : 从文件中读取参数
-    <span class="nt">--dump-recipe</span> &lt;filename&gt;    : 打印当前的参数并保存成文档
-    <span class="nt">--oF</span> &lt;filename&gt;               : 将测试结果保存到文件，这些结果可被wfuzz payload 处理
-    <span class="nt">-c</span>                : 彩色化输出
-    <span class="nt">-v</span>                : 详细输出
-    <span class="nt">-f</span> filename,printer         : 将结果以printer的方式保存到filename <span class="o">(</span>默认为raw printer<span class="o">)</span><span class="nb">.</span>
-    <span class="nt">-o</span> printer                  : 输出特定printer的输出结果
-    <span class="nt">--interact</span>            : <span class="o">(</span>测试功能<span class="o">)</span> 如果启用，所有的按键将会被捕获，这使得你能够与程序交互
-    <span class="nt">--dry-run</span>            : 打印测试结果，而并不发送HTTP请求
-    <span class="nt">--prev</span>                : 打印之前的HTTP请求（仅当使用payloads来生成测试结果时使用）
-    <span class="nt">-p</span> addr                : 使用代理，格式 ip:port:type. 可设置多个代理，type可取的值为SOCKS4,SOCKS5 or HTTP（默认）
-    <span class="nt">-t</span> N                : 指定连接的并发数，默认为10
-    <span class="nt">-s</span> N                : 指定请求的间隔时间，默认为0
-    <span class="nt">-R</span> depth            : 递归路径探测，depth指定最大递归数量
-    <span class="nt">-L</span>,--follow            : 跟随HTTP重定向
-    <span class="nt">-Z</span>                : 扫描模式 <span class="o">(</span>连接错误将被忽视<span class="o">)</span><span class="nb">.</span>
-    <span class="nt">--req-delay</span> N            : 设置发送请求允许的最大时间，默认为 90，单位为秒.
-    <span class="nt">--conn-delay</span> N              : 设置连接等待的最大时间，默认为 90，单位为秒.
-    <span class="nt">-A</span>                : 是 <span class="nt">--script</span><span class="o">=</span>default <span class="nt">-v</span> <span class="nt">-c</span> 的简写
-    <span class="nt">--script</span><span class="o">=</span>            : 与 <span class="nt">--script</span><span class="o">=</span>default 等价
-    <span class="nt">--script</span><span class="o">=</span>&lt;plugins&gt;        : 进行脚本扫描， &lt;plugins&gt; 是一个以逗号分开的插件或插件分类列表
-    <span class="nt">--script-help</span><span class="o">=</span>&lt;plugins&gt;        : 显示脚本的帮助
-    <span class="nt">--script-args</span> <span class="nv">n1</span><span class="o">=</span>v1,...     : 给脚本传递参数. ie. <span class="nt">--script-args</span> grep.regex<span class="o">=</span><span class="s2">"&lt;A href=</span><span class="se">\"</span><span class="s2">(.*?)</span><span class="se">\"</span><span class="s2">&gt;"</span>
-    <span class="nt">-u</span> url                      : 指定请求的URL
-    <span class="nt">-m</span> iterator            : 指定一个处理payloads的迭代器 <span class="o">(</span>默认为product<span class="o">)</span>
-    <span class="nt">-z</span> payload            : 为每一个占位符指定一个payload，格式为 name[,parameter][,encoder].
+    -h/--help            : 帮助文档
+    --help                : 高级帮助文档
+    --version            : Wfuzz详细版本信息
+    -e &lt;type&gt;            :  显示可用的encoders/payloads/iterators/printers/scripts列表
+    --recipe &lt;filename&gt;        : 从文件中读取参数
+    --dump-recipe &lt;filename&gt;    : 打印当前的参数并保存成文档
+    --oF &lt;filename&gt;               : 将测试结果保存到文件，这些结果可被wfuzz payload 处理
+    -c                : 彩色化输出
+    -v                : 详细输出
+    -f filename,printer         : 将结果以printer的方式保存到filename (默认为raw printer).
+    -o printer                  : 输出特定printer的输出结果
+    --interact            : (测试功能) 如果启用，所有的按键将会被捕获，这使得你能够与程序交互
+    --dry-run            : 打印测试结果，而并不发送HTTP请求
+    --prev                : 打印之前的HTTP请求（仅当使用payloads来生成测试结果时使用）
+    -p addr                : 使用代理，格式 ip:port:type. 可设置多个代理，type可取的值为SOCKS4,SOCKS5 or HTTP（默认）
+    -t N                : 指定连接的并发数，默认为10
+    -s N                : 指定请求的间隔时间，默认为0
+    -R depth            : 递归路径探测，depth指定最大递归数量
+    -L,--follow            : 跟随HTTP重定向
+    -Z                : 扫描模式 (连接错误将被忽视).
+    --req-delay N            : 设置发送请求允许的最大时间，默认为 90，单位为秒.
+    --conn-delay N              : 设置连接等待的最大时间，默认为 90，单位为秒.
+    -A                : 是 --script=default -v -c 的简写
+    --script=            : 与 --script=default 等价
+    --script=&lt;plugins&gt;        : 进行脚本扫描， &lt;plugins&gt; 是一个以逗号分开的插件或插件分类列表
+    --script-help=&lt;plugins&gt;        : 显示脚本的帮助
+    --script-args n1=v1,...     : 给脚本传递参数. ie. --script-args grep.regex="&lt;A href=\"(.*?)\"&gt;"
+    -u url                      : 指定请求的URL
+    -m iterator            : 指定一个处理payloads的迭代器 (默认为product)
+    -z payload            : 为每一个占位符指定一个payload，格式为 name[,parameter][,encoder].
                       编码可以是一个列表, 如 md5-sha1. 还可以串联起来, 如. md5@sha1.
                       还可使用编码各类名，如 url
                                       使用help作为payload来显示payload的详细帮助信息，还可使用--slice进行过滤
-    <span class="nt">--zP</span> &lt;params&gt;            : 给指定的payload设置参数。必须跟在 <span class="nt">-z</span> 或-w 参数后面
-    <span class="nt">--slice</span> &lt;filter&gt;        : 以指定的表达式过滤payload的信息，必须跟在-z 参数后面
-    <span class="nt">-w</span> wordlist            : 指定一个wordlist文件，等同于 <span class="nt">-z</span> file,wordlist
-    <span class="nt">-V</span> alltype            : 暴力测试所有GET/POST参数，无需指定占位符
-    <span class="nt">-X</span> method            : 指定一个发送请求的HTTP方法，如HEAD或FUZZ
-    <span class="nt">-b</span> cookie            : 指定请求的cookie参数，可指定多个cookie
-    <span class="nt">-d</span> postdata             : 设置用于测试的POST data <span class="o">(</span>ex: <span class="s2">"id=FUZZ&amp;catalogue=1"</span><span class="o">)</span>
-    <span class="nt">-H</span> header              : 设置用于测试请求的HEADER <span class="o">(</span>ex:<span class="s2">"Cookie:id=1312321&amp;user=FUZZ"</span><span class="o">)</span><span class="nb">.</span> 可指定多个HEADER.
-    <span class="nt">--basic</span>/ntlm/digest auth    : 格式为 <span class="s2">"user:pass"</span> or <span class="s2">"FUZZ:FUZZ"</span> or <span class="s2">"domain</span><span class="se">\F</span><span class="s2">UZ2Z:FUZZ"</span>
-    <span class="nt">--hc</span>/hl/hw/hh N[,N]+        : 以指定的返回码/行数/字数/字符数作为判断条件隐藏返回结果 <span class="o">(</span>用 BBB 来接收 baseline<span class="o">)</span>
-    <span class="nt">--sc</span>/sl/sw/sh N[,N]+        : 以指定的返回码/行数/字数/字符数作为判断条件显示返回结果 <span class="o">(</span>用 BBB 来接收 baseline<span class="o">)</span>
-    <span class="nt">--ss</span>/hs regex            : 显示或隐藏返回结果中符合指定正则表达式的返回结果
-    <span class="nt">--filter</span> &lt;filter&gt;        : 显示或隐藏符合指定filter表达式的返回结果 <span class="o">(</span>用 BBB 来接收 baseline<span class="o">)</span>
-    <span class="nt">--prefilter</span> &lt;filter&gt;        : 用指定的filter表达式在测试之前过滤某些测试条目
-</code></pre></div></div> </article> <div class="page-navigation code"> <a class="next" href="http://localhost:4000/archives/2018-10-28/2" title="NEXT: Wfuzz基本功">&lt;&lt;</a> <span> &middot; </span> <a class="home" href="http://localhost:4000/" title="Back to Index">INDEX</a> <span> &middot; </span> <a class="prev" href="http://localhost:4000/archives/2018-09-11/1" title="PREV: 刺透内网的HTTP代理">&gt;&gt;</a> </div> <div class="comments"> <div id="giscus-container" class="giscus"></div> <script> (function() { const getTheme = () => { try { const savedTheme = localStorage.getItem('theme'); if (savedTheme) { return savedTheme; } } catch (e) {} if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { return 'dark'; } const hour = new Date().getHours(); return (hour >= 6 && hour < 18) ? 'light' : 'dark'; }; const theme = getTheme(); const giscusTheme = theme === 'dark' ? 'dark_tritanopia' : 'light_protanopia'; const script = document.createElement('script'); script.src = "https://giscus.app/client.js"; script.setAttribute("data-repo", "gh0stkey/gh0stkey.github.io"); script.setAttribute("data-repo-id", "MDEwOlJlcG9zaXRvcnkzODc5NzEyMzU="); script.setAttribute("data-category", "Announcements"); script.setAttribute("data-category-id", "DIC_kwDOFx_4o84CyCUA"); script.setAttribute("data-mapping", "title"); script.setAttribute("data-strict", "0"); script.setAttribute("data-reactions-enabled", "0"); script.setAttribute("data-emit-metadata", "0"); script.setAttribute("data-input-position", "top"); script.setAttribute("data-lang", "zh-CN"); script.setAttribute("data-theme", giscusTheme); script.setAttribute("crossorigin", "anonymous"); script.async = true; document.getElementById('giscus-container').appendChild(script); })(); </script> </div> </div> <div class="footer"> <span class="block">&lt;/&gt; Copyright &copy; Chen's Blog (GH0ST.CN) 2016-2021</span> </div> <script src="/fancybox/lib/jquery-1.10.2.min.js"></script> <script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script> <script> $(document).ready(function() { $("article img").each(function() { var strA = "<a style='text-decoration: none;' id='imgid' href='" + this.src + "'></a>"; $(this).wrapAll(strA); }); $(".block").html("&lt;/&gt; Copyright &copy; Chen's Blog (GH0ST.CN) 2016-" + (new Date()).getFullYear()); }); $("#imgid").fancybox({ openEffect : 'elastic', closeEffect : 'elastic', }); </script> </body> </html>
+    --zP &lt;params&gt;            : 给指定的payload设置参数。必须跟在 -z 或-w 参数后面
+    --slice &lt;filter&gt;        : 以指定的表达式过滤payload的信息，必须跟在-z 参数后面
+    -w wordlist            : 指定一个wordlist文件，等同于 -z file,wordlist
+    -V alltype            : 暴力测试所有GET/POST参数，无需指定占位符
+    -X method            : 指定一个发送请求的HTTP方法，如HEAD或FUZZ
+    -b cookie            : 指定请求的cookie参数，可指定多个cookie
+    -d postdata             : 设置用于测试的POST data (ex: "id=FUZZ&amp;catalogue=1")
+    -H header              : 设置用于测试请求的HEADER (ex:"Cookie:id=1312321&amp;user=FUZZ"). 可指定多个HEADER.
+    --basic/ntlm/digest auth    : 格式为 "user:pass" or "FUZZ:FUZZ" or "domain\FUZ2Z:FUZZ"
+    --hc/hl/hw/hh N[,N]+        : 以指定的返回码/行数/字数/字符数作为判断条件隐藏返回结果 (用 BBB 来接收 baseline)
+    --sc/sl/sw/sh N[,N]+        : 以指定的返回码/行数/字数/字符数作为判断条件显示返回结果 (用 BBB 来接收 baseline)
+    --ss/hs regex            : 显示或隐藏返回结果中符合指定正则表达式的返回结果
+    --filter &lt;filter&gt;        : 显示或隐藏符合指定filter表达式的返回结果 (用 BBB 来接收 baseline)
+    --prefilter &lt;filter&gt;        : 用指定的filter表达式在测试之前过滤某些测试条目
+</code></pre></article> <div class="page-navigation code"> <a class="next" href="http://localhost:4000/archives/2018-10-28/2" title="NEXT: Wfuzz基本功">&lt;&lt;</a> <span> &middot; </span> <a class="home" href="http://localhost:4000/" title="Back to Index">INDEX</a> <span> &middot; </span> <a class="prev" href="http://localhost:4000/archives/2018-09-11/1" title="PREV: 刺透内网的HTTP代理">&gt;&gt;</a> </div> <div class="comments"> <div id="giscus-container" class="giscus"></div> <script> (function() { const getTheme = () => { try { const savedTheme = localStorage.getItem('theme'); if (savedTheme) { return savedTheme; } } catch (e) {} if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { return 'dark'; } const hour = new Date().getHours(); return (hour >= 6 && hour < 18) ? 'light' : 'dark'; }; const theme = getTheme(); const giscusTheme = theme === 'dark' ? 'dark_tritanopia' : 'light_protanopia'; const script = document.createElement('script'); script.src = "https://giscus.app/client.js"; script.setAttribute("data-repo", "gh0stkey/gh0stkey.github.io"); script.setAttribute("data-repo-id", "MDEwOlJlcG9zaXRvcnkzODc5NzEyMzU="); script.setAttribute("data-category", "Announcements"); script.setAttribute("data-category-id", "DIC_kwDOFx_4o84CyCUA"); script.setAttribute("data-mapping", "title"); script.setAttribute("data-strict", "0"); script.setAttribute("data-reactions-enabled", "0"); script.setAttribute("data-emit-metadata", "0"); script.setAttribute("data-input-position", "top"); script.setAttribute("data-lang", "zh-CN"); script.setAttribute("data-theme", giscusTheme); script.setAttribute("crossorigin", "anonymous"); script.async = true; document.getElementById('giscus-container').appendChild(script); })(); </script> </div> </div> <div class="footer"> <span class="block">&lt;/&gt; Copyright &copy; Chen's Blog (GH0ST.CN) 2016-2021</span> </div> <script src="/fancybox/lib/jquery-1.10.2.min.js"></script> <script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script> <script> $(document).ready(function() { $("article img").each(function() { var strA = "<a style='text-decoration: none;' id='imgid' href='" + this.src + "'></a>"; $(this).wrapAll(strA); }); $(".block").html("&lt;/&gt; Copyright &copy; Chen's Blog (GH0ST.CN) 2016-" + (new Date()).getFullYear()); }); $("#imgid").fancybox({ openEffect : 'elastic', closeEffect : 'elastic', }); </script> <script src="/assets/js/highlight/highlight.min.js"></script> <script> document.addEventListener('DOMContentLoaded', function() { document.querySelectorAll('pre code[class*="language-"]').forEach(block => { hljs.highlightElement(block); }); }); const toggleHighlightTheme = () => { const theme = document.documentElement.getAttribute('data-theme'); const lightCss = document.getElementById('highlight-light'); const darkCss = document.getElementById('highlight-dark'); if (theme === 'dark') { lightCss.disabled = true; darkCss.disabled = false; } else { lightCss.disabled = false; darkCss.disabled = true; } }; document.addEventListener('DOMContentLoaded', toggleHighlightTheme); const observer = new MutationObserver(toggleHighlightTheme); observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); </script> </body> </html>

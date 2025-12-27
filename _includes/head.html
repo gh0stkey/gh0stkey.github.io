@@ -17,9 +17,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ "/assets/core.css" | prepend: site.baseurl | prepend: site.url }}">
+<link rel="stylesheet" href="{{ "/assets/css/highlight/github.min.css" | prepend: site.baseurl }}" id="highlight-light">
+<link rel="stylesheet" href="{{ "/assets/css/highlight/github-dark.min.css" | prepend: site.baseurl }}" id="highlight-dark" disabled>
+<link rel="stylesheet" href="{{ "/assets/core.css" | prepend: site.baseurl }}">
 <link rel="canonical" href="{{ page.url | prepend: site.baseurl | prepend: site.url }}">
-<link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}" />
+<link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.url }}" />
 <link href="/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="all" />
 
 <script>

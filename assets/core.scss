@@ -3,18 +3,3 @@
 ---
 
 @import 'main';
-@import 'syntax';
-
-[data-theme="dark"] {
-  .highlight {
-    .c, .cm, .c1, .cs { color: #8b949e; } // Comments
-    .k, .kc, .kd, .kp, .kr, .kt { color: #ff7b72; } // Keywords
-    .o, .ow { color: #ff7b72; } // Operators
-    .s, .sb, .sc, .sd, .s2, .se, .sh, .si, .sx, .sr, .s1, .ss { color: #a5d6ff; } // Strings
-    .n, .na, .nb, .bp, .nc, .no, .nd, .ni, .ne, .nf, .fm, .py, .nl, .nn, .nx, .nt, .nv, .vc, .vg, .vi { color: #c9d1d9; } // Names
-    .m, .mf, .mh, .mi, .mo, .il { color: #79c0ff; } // Numbers
-    .err { color: #f0f6fc; background-color: #8b080b; } // Errors
-    .gd { color: #f0f6fc; background-color: #8b080b; } // Deleted
-    .gi { color: #f0f6fc; background-color: #1f6feb; } // Inserted
-  }
-}

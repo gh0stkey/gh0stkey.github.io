@@ -14,10 +14,12 @@ mathjax:            true # enables support for mathjax - set to 'false' to disab
 future:             true
 
 # Site Build
-highlighter:        rouge
+highlighter:        none
 markdown:           kramdown
 kramdown:
     input:          GFM
+    syntax_highlighter_opts:
+      disable:      true
 sass:
     style:          :compressed
 
