@@ -65,11 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (toggleBtn) {
     toggleBtn.addEventListener('click', toggleTheme);
   }
-  // Ensure icons are correct on load (in case initTheme ran before DOM was ready)
   const currentTheme = document.documentElement.getAttribute('data-theme');
   updateIcons(currentTheme);
 
-  // Sync Giscus theme when it loads
   const giscusContainer = document.getElementById('giscus-container');
   if (giscusContainer) {
     const observer = new MutationObserver((mutations) => {

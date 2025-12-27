@@ -1,2 +1,2 @@
-sitemap: http://localhost:4000/sitemap.xml
+sitemap: https://gh0st.cn/sitemap.xml
 disallow: /
