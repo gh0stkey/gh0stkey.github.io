@@ -111,7 +111,7 @@ JSBridge 是一种在 App 中实现 JavaScript 与 Native 代码通信的技术�
 2. 打开跳转页面点击 A 标签，调用起目标 APP 的 WebView 组件访问自动化遍历脚本页面，分析发现 `czbInfo.getAppInfo` 方法可以获取凭证。
 3. 构建 JavaScript 外带代码用于验证凭证可以经过网络进行远程获取。
 
-![](/images/2025-12-26/5.png))
+![](/images/2025-12-26/5.png)
 
 ## 总结与思考
 

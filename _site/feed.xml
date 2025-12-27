@@ -7,8 +7,8 @@
     
       
         <item>
-          <title>黑盒视角：探索 Webvie 组件漏洞面</title>
-          <description>&lt;h1 id=&quot;黑盒视角探索-webvie-组件漏洞面&quot;&gt;黑盒视角：探索 Webvie 组件漏洞面&lt;/h1&gt;
+          <title>黑盒视角下的 WebView 漏洞面探索</title>
+          <description>&lt;h1 id=&quot;黑盒视角下的-webview-漏洞面探索&quot;&gt;黑盒视角下的 WebView 漏洞面探索&lt;/h1&gt;
 
 &lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
 
@@ -113,7 +113,7 @@
   &lt;li&gt;构建 JavaScript 外带代码用于验证凭证可以经过网络进行远程获取。&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/2025-12-26/5.png&quot; alt=&quot;&quot; /&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2025-12-26/5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;总结与思考&quot;&gt;总结与思考&lt;/h2&gt;
 
