@@ -41,6 +41,16 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+
+::selection {
+  background: var(--link-hover-color);
+  color: #fff;
+}
+
+::-moz-selection {
+  background: var(--link-hover-color);
+  color: #fff;
+}
 html {
   margin: 0;
   padding: 0;
@@ -97,6 +107,8 @@ img {
   max-width: 100%;
   box-shadow: 0 0 10px var(--border-color);
   -webkit-box-shadow: 0 0 10px var(--border-color);
+  display: block;
+  margin: 20px auto;
 }
 video {
   max-width: 100%;
@@ -127,70 +139,49 @@ blockquote {
   background: var(--blockquote-bg);
   color: var(--text-color);
 }
-.logo {
-  position: relative;
+.author-section {
+  max-width: 700px;
   margin: 0 auto 35px;
   text-align: center;
+}
+
+.author-avatar-link {
+  display: inline-block;
+  margin-bottom: 15px;
+
+  .author-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+  }
+}
+
+.author-title {
+  font-size: 1.2em;
+  text-align: center;
+  margin: 0 0 10px 0;
+  font-weight: 500;
+  color: var(--heading-color);
+}
+
+.author-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9em;
+
   a {
-    background: var(--logo-bg) url("logo_wrapper.png");
-    color: #000;
+    color: var(--meta-color);
     text-decoration: none;
-    font-weight: 700;
-    height: 100px;
-    width: 100px;
-    font-size: 1.5em;
-    border-radius: 100%;
-    display: inline-block;
-    text-align: center;
-    line-height: 100px;
-    border: 5px solid var(--logo-border);
-    box-sizing: border-box;
-    &:hover,
-    &:focus {
-      background: var(--logo-hover);
-    }
-    &:hover + .logo-prompt,
-    &:focus + .logo-prompt {
-      display: inline-block !important;
-    }
-    .logo-avatar {
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-      -webkit-border-radius: 50%;
-      -moz-border-radius: 50%;
-      border-radius: 50%;
-    }
-    @media (max-width : 480px) {&:hover + .logo-prompt,
-      &:focus + .logo-prompt {
-        display: none !important;
-      }
+
+    &:hover {
+      color: var(--link-hover-color);
     }
   }
-  .logo-prompt {
-    position: absolute;
-    display: none;
-    vertical-align: middle;
-    padding: 5px;
-    border-radius: 3px;
-    background: #666;
-    background: rgba(0,0,0,.5);
-    margin-left: 15px;
-    color: #fff;
-    font-size: 0.8235em;
-    text-align: center;
-    line-height: 1.2;
-    top: 50%;
-    margin-top: -10px;
-    &:before {
-      content: "";
-      border-width: 5px 5px 5px 0;
-      border-style: solid;
-      border-color: transparent #666;
-      border-color: transparent rgba(0,0,0,.5);
-      position: absolute;
-      top: 50%;
-      left: -5px;
-      margin-top: -5px;
-    }
+
+  .separator {
+    color: var(--border-color);
   }
 }
 iframe {
@@ -480,4 +471,87 @@ section {
   100% {
     -webkit-transform: none;
   }
+}
+
+.toc-container {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  width: 220px;
+  max-height: 70vh;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 999;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  &.toc-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media (max-width: 1200px) {
+    display: none;
+  }
+}
+
+.toc-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--heading-color);
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  .toc-sublist {
+    list-style: none;
+    margin: 0;
+    padding-left: 15px;
+  }
+}
+
+.toc-item {
+  margin: 4px 0;
+}
+
+.toc-link {
+  display: block;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
+
+  &:hover {
+    background: var(--code-bg);
+    color: var(--link-hover-color);
+  }
+
+  &.active {
+    background: var(--code-bg);
+    color: var(--link-hover-color);
+    border-left-color: var(--link-hover-color);
+    font-weight: 600;
+  }
+}
+
+.toc-level-3 .toc-link,
+.toc-level-4 .toc-link {
+  font-size: 12px;
 }
