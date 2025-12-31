@@ -105,8 +105,6 @@ h6 {
 }
 img {
   max-width: 100%;
-  box-shadow: 0 0 10px var(--border-color);
-  -webkit-box-shadow: 0 0 10px var(--border-color);
   display: block;
   margin: 20px auto;
 }
@@ -267,6 +265,9 @@ article {
     line-height: 1.4em;
     text-align: center;
     font-size: 1.4em;
+  }
+  .prose h1 {
+    display: none;
   }
   .divider {
     background: var(--divider-color);
