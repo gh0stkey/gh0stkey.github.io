@@ -556,3 +556,48 @@ section {
 .toc-level-4 .toc-link {
   font-size: 12px;
 }
+
+.friends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+  padding: 0;
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-color);
+  transition: all 0.25s ease;
+  text-align: center;
+
+  a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    display: block;
+    width: 100%;
+    transition: color 0.2s ease;
+  }
+
+  &:hover {
+    border-color: var(--link-hover-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+
+    a {
+      color: var(--link-hover-color);
+    }
+  }
+}
+
+[data-theme="dark"] .friend-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
