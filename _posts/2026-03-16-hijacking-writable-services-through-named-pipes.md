@@ -25,7 +25,7 @@ description: "本文在分析某 Windows 应用的服务组件时，发现其创
 
 #### 发现命名管道
 
-发现命名管道及查看其对应的 ACL 策略可以借助 [Sysinternals Suite](https://learn.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite) 内的 `pipelist` 和 `accesschk`。这里[0cat](https://github.com/0cat-r)向我推荐了一款可视化友好的工具：[Pipetap](https://github.com/sensepost/pipetap)。通过查看 `Pipelist` 发现存在一个 ACL 策略为 Everyone 可写的命名管道：`KeyServicePipe`。
+发现命名管道及查看其对应的 ACL 策略可以借助 [Sysinternals Suite](https://learn.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite) 内的 `pipelist` 和 `accesschk`。这里 [0cat](https://github.com/0cat-r) 向我推荐了一款可视化友好的工具：[Pipetap](https://github.com/sensepost/pipetap)。通过查看 `Pipelist` 发现存在一个 ACL 策略为 Everyone 可写的命名管道：`KeyServicePipe`。
 
 ![CleanShot 2026-01-04 at 16.11.27@2x](/images/2026-03-16/CleanShot%202026-01-04%20at%2016.11.27@2x.png)
 
