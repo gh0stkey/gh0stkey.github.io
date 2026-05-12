@@ -12,7 +12,7 @@
 
 &lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
 
-&lt;p&gt;本文在分析某 Windows 应用的服务组件时，发现其创建的命名管道访问控制配置宽松，允许低权限用户连接并发送指令，从而触发高权限的终止任意进程操作（&lt;code&gt;taskkill&lt;/code&gt;）。进一步分析发现，被终止的服务会自动重启，而其可执行文件的权限配置错误，允许 Everyone 组读写。结合这两个缺陷，可构造一条完整的本地提权利用链。&lt;/p&gt;
+&lt;p&gt;在分析某 Windows 应用的服务组件时，发现其创建的命名管道访问控制配置宽松，允许低权限用户连接并发送指令，从而触发高权限的终止任意进程操作（&lt;code&gt;taskkill&lt;/code&gt;）。进一步分析发现，被终止的服务会自动重启，而其可执行文件的权限配置错误，允许 Everyone 组读写。结合这两个缺陷，可构造一条完整的本地提权利用链。&lt;/p&gt;
 
 &lt;h2 id=&quot;漏洞挖掘过程&quot;&gt;漏洞挖掘过程&lt;/h2&gt;
 
@@ -26,7 +26,7 @@
 
 &lt;h4 id=&quot;发现命名管道&quot;&gt;发现命名管道&lt;/h4&gt;
 
-&lt;p&gt;发现命名管道及查看其对应的 ACL 策略可以借助 &lt;a href=&quot;https://learn.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite&quot;&gt;Sysinternals Suite&lt;/a&gt; 内的 &lt;code&gt;pipelist&lt;/code&gt; 和 &lt;code&gt;accesschk&lt;/code&gt;。这里&lt;a href=&quot;https://github.com/0cat-r&quot;&gt;0cat&lt;/a&gt;向我推荐了一款可视化友好的工具：&lt;a href=&quot;https://github.com/sensepost/pipetap&quot;&gt;Pipetap&lt;/a&gt;。通过查看 &lt;code&gt;Pipelist&lt;/code&gt; 发现存在一个 ACL 策略为 Everyone 可写的命名管道：&lt;code&gt;KeyServicePipe&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;发现命名管道及查看其对应的 ACL 策略可以借助 &lt;a href=&quot;https://learn.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite&quot;&gt;Sysinternals Suite&lt;/a&gt; 内的 &lt;code&gt;pipelist&lt;/code&gt; 和 &lt;code&gt;accesschk&lt;/code&gt;。这里 &lt;a href=&quot;https://github.com/0cat-r&quot;&gt;0cat&lt;/a&gt; 向我推荐了一款可视化友好的工具：&lt;a href=&quot;https://github.com/sensepost/pipetap&quot;&gt;Pipetap&lt;/a&gt;。通过查看 &lt;code&gt;Pipelist&lt;/code&gt; 发现存在一个 ACL 策略为 Everyone 可写的命名管道：&lt;code&gt;KeyServicePipe&lt;/code&gt;。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/2026-03-16/CleanShot%202026-01-04%20at%2016.11.27@2x.png&quot; alt=&quot;CleanShot 2026-01-04 at 16.11.27@2x&quot; /&gt;&lt;/p&gt;
 
