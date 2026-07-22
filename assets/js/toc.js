@@ -80,7 +80,7 @@
     }));
 
     function updateActiveTOC() {
-      const scrollPos = window.scrollY + 100;
+      const scrollPos = window.scrollY + window.innerHeight * 0.35;
 
       let activeIndex = 0;
       for (let i = 0; i < headingsMap.length; i++) {
