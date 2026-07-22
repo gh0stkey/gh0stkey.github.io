@@ -8,17 +8,22 @@
     const headings = prose.querySelectorAll("h2, h3, h4");
     if (headings.length === 0) return;
 
-    // Create TOC container
     const tocContainer = document.createElement("div");
     tocContainer.className = "toc-container";
     tocContainer.innerHTML =
-      '<div class="toc-title">TOC - 目录</div><ul class="toc-list"></ul>';
+      '<button class="toc-title" type="button" aria-expanded="true" aria-controls="toc-list" aria-label="收起文章目录"><span class="toc-title-text">文章目录</span><span class="toc-toggle" aria-hidden="true"><i></i><i></i><i></i></span></button><ul class="toc-list" id="toc-list"></ul>';
 
     document.body.appendChild(tocContainer);
 
+    const tocTitle = tocContainer.querySelector(".toc-title");
     const tocList = tocContainer.querySelector(".toc-list");
-    let h2List = null;
-    let currentLevel = 2;
+    const parents = {};
+
+    tocTitle.addEventListener("click", function () {
+      const collapsed = tocContainer.classList.toggle("toc-collapsed");
+      tocTitle.setAttribute("aria-expanded", String(!collapsed));
+      tocTitle.setAttribute("aria-label", collapsed ? "展开文章目录" : "收起文章目录");
+    });
 
     headings.forEach((heading, index) => {
       // Generate ID if not present
@@ -37,32 +42,25 @@
 
       li.appendChild(link);
 
-      if (level === 2) {
+      if (level === 2 || !parents[level - 1]) {
         tocList.appendChild(li);
-        h2List = li;
-      } else if (level === 3 && h2List) {
-        let subList = h2List.querySelector(".toc-sublist");
+      } else {
+        const parent = parents[level - 1];
+        let subList = Array.from(parent.children).find((child) =>
+          child.classList.contains("toc-sublist"),
+        );
         if (!subList) {
           subList = document.createElement("ul");
           subList.className = "toc-sublist";
-          h2List.appendChild(subList);
+          parent.appendChild(subList);
         }
         subList.appendChild(li);
-      } else if (level === 4 && h2List) {
-        let subList = h2List.querySelector(".toc-sublist");
-        if (subList) {
-          const lastH3 = subList.querySelector("li:last-child");
-          if (lastH3) {
-            let subSubList = lastH3.querySelector(".toc-sublist");
-            if (!subSubList) {
-              subSubList = document.createElement("ul");
-              subSubList.className = "toc-sublist";
-              lastH3.appendChild(subSubList);
-            }
-            subSubList.appendChild(li);
-          }
-        }
       }
+
+      parents[level] = li;
+      Object.keys(parents).forEach((parentLevel) => {
+        if (Number(parentLevel) > level) delete parents[parentLevel];
+      });
 
       // Smooth scroll
       link.addEventListener("click", function (e) {
@@ -102,17 +100,6 @@
     window.addEventListener("scroll", updateActiveTOC);
     updateActiveTOC();
 
-    // Show/hide TOC on scroll
-    let lastScrollTop = 0;
-    window.addEventListener("scroll", function () {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      if (scrollTop > 300) {
-        tocContainer.classList.add("toc-visible");
-      } else {
-        tocContainer.classList.remove("toc-visible");
-      }
-      lastScrollTop = scrollTop;
-    });
   }
 
   if (document.readyState === "loading") {
