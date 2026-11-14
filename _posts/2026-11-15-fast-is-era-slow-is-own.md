@@ -4,6 +4,7 @@ author: Vulkey_Chen
 title: "快是时代的，慢可以是自己的"
 date: 2026-11-15
 permalink: /archives/2026-11-15/1
+disclaimer: false
 description: "AI 时代节奏越来越快，那些需要慢下心来做的事情往往被忽略。回归基本功或许是个人的一种答案：把一个工具用深，把经验写下来，把话说给人听。"
 ---
 
